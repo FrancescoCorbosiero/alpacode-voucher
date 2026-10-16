@@ -1,0 +1,40 @@
+---
+/* Why it's safe to recommend Alpacode — only promises alpacode.it already
+   makes (home page "pitch" chips and "Metodo" steps). */
+import type { IconName } from "../data/shared";
+import Icon from "./Icon.astro";
+
+interface Props {
+  kicker: string;
+  title: string;
+  lede: string;
+  items: { icon: IconName; t: string; d: string }[];
+}
+const { kicker, title, lede, items } = Astro.props;
+---
+
+<section class="rf-section rf-why" aria-labelledby="why-title">
+  <div class="wrap-wide">
+    <div class="section-head">
+      <div>
+        <div class="sec-num">{kicker}</div>
+        <h2 id="why-title">{title}</h2>
+      </div>
+      <p class="lede">{lede}</p>
+    </div>
+    <ul class="rf-why-grid">
+      {
+        items.map((it) => (
+          <li class="rf-why-item">
+            <span class="strut-short" aria-hidden="true" />
+            <span class="rf-why-icon" aria-hidden="true">
+              <Icon name={it.icon} size={28} />
+            </span>
+            <h3>{it.t}</h3>
+            <p>{it.d}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

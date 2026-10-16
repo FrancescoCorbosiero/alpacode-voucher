@@ -1,0 +1,24 @@
+---
+/* The flyer's alpaca: a flat silhouette in profile, drawn for this page.
+   Decorative (aria-hidden); colour comes from currentColor. */
+interface Props {
+  class?: string;
+  width?: number;
+}
+const { class: cls, width = 64 } = Astro.props;
+const height = Math.round(width * 1.2);
+---
+
+<svg
+  class:list={["alpaca", cls]}
+  viewBox="0 0 100 120"
+  width={width}
+  height={height}
+  aria-hidden="true"
+  focusable="false"
+>
+  <path
+    fill="currentColor"
+    d="M55 20 Q55 9 57 2 Q60 7 61.5 13.5 L63.5 13 Q65 6 68 1 Q70 7 69.5 13.5 Q76 12 80 17 L87 21.5 Q90.5 23.5 89.5 27 Q88.5 30.5 84 30.5 L76.5 31 Q71 32 70 38 L69.5 57 Q73.5 66 70.5 77 L71 116 Q71 118 69 118 L65 118 L64 89 L62 89 L61.5 117 L56.5 117 L56 85 Q42 90 29.5 85 L29.5 117 L24 117 L23 94 L21 94 L20.5 117 L15 117 L14.5 85 Q8.5 78 9 67 Q9 60 12 57 Q6.5 56.5 7 52.5 Q8 48.5 13.5 50.5 Q31 45.5 49.5 48.5 Q55 49.5 55 43 L55 26 Z"
+  ></path>
+</svg>

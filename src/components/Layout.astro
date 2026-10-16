@@ -1,0 +1,97 @@
+---
+import "@fontsource/archivo-black/400.css";
+import "@fontsource/manrope/400.css";
+import "@fontsource/manrope/500.css";
+import "@fontsource/manrope/600.css";
+import "@fontsource/manrope/700.css";
+import "@fontsource/manrope/800.css";
+import "@fontsource/caveat/600.css";
+import "../styles/global.css";
+
+import type { Lang } from "../i18n/types";
+import { shared } from "../data/shared";
+import { organizationSchema } from "../lib/schema";
+import { localizePath } from "../i18n/utils";
+import Header from "./Header.astro";
+import Footer from "./Footer.astro";
+import Fab from "./Fab.astro";
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Root-relative paths of this page in both languages (hreflang + switch). */
+  paths: Record<Lang, string>;
+  ogImage: string;
+  ogAlt: string;
+  noindex?: boolean;
+  jsonLd?: object[];
+  ctaLabel: string;
+  ctaHref: string;
+}
+const { lang, title, description, paths, ogImage, ogAlt, noindex, jsonLd, ctaLabel, ctaHref } = Astro.props;
+
+const site = Astro.site ?? new URL("https://voucher.alpacode.it");
+const canonical = new URL(paths[lang], site).href;
+const itUrl = new URL(paths.it, site).href;
+const enUrl = new URL(paths.en, site).href;
+const ogUrl = new URL(ogImage, site).href;
+const other: Lang = lang === "it" ? "en" : "it";
+
+const ldJson = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [organizationSchema(), ...(jsonLd ?? [])],
+});
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#f0f3f9" />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {!noindex && <link rel="alternate" hreflang="it" href={itUrl} />}
+    {!noindex && <link rel="alternate" hreflang="en" href={enUrl} />}
+    {!noindex && <link rel="alternate" hreflang="x-default" href={itUrl} />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Alpacode · Soluzioni Digitali" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogAlt} />
+    <meta property="og:locale" content={lang === "it" ? "it_IT" : "en_US"} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogUrl} />
+    <meta name="twitter:image:alt" content={ogAlt} />
+    <meta name="generator" content={Astro.generator} />
+    <script type="application/ld+json" is:inline set:html={ldJson} />
+  </head>
+  <body>
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <a class="skip-link" href="#main">{shared[lang].skip}</a>
+    <Header lang={lang} homeHref={localizePath("", lang)} altHref={paths[other]} ctaLabel={ctaLabel} ctaHref={ctaHref} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+    <Fab lang={lang} />
+    <script>
+      import "../lib/motion.ts";
+    </script>
+  </body>
+</html>

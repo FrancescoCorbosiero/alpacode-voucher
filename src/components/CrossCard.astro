@@ -1,0 +1,21 @@
+---
+/* The bordered "portal" card that cross-links a related landing, painted
+   in the target's accent (house rule — see .ptn-cross on alpacode.it). */
+interface Props {
+  href: string;
+  tag: string;
+  title: string;
+  body: string;
+  cta: string;
+  /** "partner" = the partner program's green; "blue" = this program. */
+  accent?: "partner" | "blue";
+}
+const { href, tag, title, body, cta, accent = "blue" } = Astro.props;
+---
+
+<a class:list={["rf-cross", `rf-cross--${accent}`]} href={href}>
+  <span class="rf-cross-tag">{tag}</span>
+  <span class="rf-cross-title">{title}</span>
+  <span class="rf-cross-body">{body}</span>
+  <span class="rf-cross-cta">{cta} <span class="arrow" aria-hidden="true">→</span></span>
+</a>

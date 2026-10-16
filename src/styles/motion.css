@@ -1,0 +1,143 @@
+/* ============================================================
+   Motion — the CSS half of the engine (src/lib/motion.ts is the
+   other half). Ported from alpacode-website.
+
+   1. INTRO — above the fold, pure CSS keyframes, so the first screen
+      animates on first paint without waiting for JavaScript:
+        .intro-lines   each .line > span rises out of its own mask
+        [data-intro]   fades up; --intro-d sets the delay
+   2. SCROLL — below the fold, GSAP ScrollTrigger + SplitText with
+      Lenis smooth scrolling (motion.ts). Nothing below the fold is
+      hidden by CSS: if the script never runs the page is just static.
+
+   prefers-reduced-motion: every intro and scroll effect is off.
+   ============================================================ */
+
+/* ---------- Lenis (smooth scroll) — upstream lenis.css ---------- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* ---------- 1. Intro ---------- */
+.intro-lines .line {
+  display: block;
+  overflow: hidden;
+  padding: 0.1em 0 0.12em;
+  margin: -0.1em 0 -0.12em;
+}
+.intro-lines .line > span {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .intro-lines .line > span {
+    animation: introLine 1.15s var(--ease-expo) both;
+    animation-delay: calc(0.12s + var(--line-i, 0) * 0.09s);
+  }
+  .intro-lines .line:nth-child(2) > span {
+    --line-i: 1;
+  }
+  .intro-lines .line:nth-child(3) > span {
+    --line-i: 2;
+  }
+  .intro-lines .line:nth-child(4) > span {
+    --line-i: 3;
+  }
+
+  [data-intro] {
+    animation: introFade 0.95s var(--ease-expo) both;
+    animation-delay: var(--intro-d, 0.55s);
+  }
+}
+
+@keyframes introLine {
+  from {
+    transform: translateY(120%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes introFade {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes introBar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ---------- 2. Scroll helpers (state set by motion.ts) ---------- */
+.split-line-mask {
+  padding: 0.1em 0 0.12em;
+  margin: -0.1em 0 -0.12em;
+}
+.split-word-mask {
+  padding: 0.1em 0.02em 0.12em;
+  margin: -0.1em -0.02em -0.12em;
+}
+
+/* Progress rails ([data-progress]) — steps light up as the fill passes. */
+[data-progress-step] {
+  transition:
+    opacity 0.5s var(--ease),
+    color 0.5s var(--ease);
+}
+.has-motion [data-progress-step]:not(.is-reached) {
+  opacity: 0.38;
+}
+
+/* Scroll-progress strut down the left edge (native scroll timeline). */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--blue);
+  transform: scaleY(0);
+  transform-origin: top center;
+  z-index: 60;
+  pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: scrollProgress linear both;
+    animation-timeline: scroll(root block);
+  }
+  @keyframes scrollProgress {
+    to {
+      transform: scaleY(1);
+    }
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress {
+    display: none;
+  }
+  .ticker-track {
+    animation: none !important;
+  }
+  .site-header {
+    transition: none;
+  }
+}

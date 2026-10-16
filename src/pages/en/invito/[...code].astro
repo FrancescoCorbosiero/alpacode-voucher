@@ -1,0 +1,8 @@
+---
+import InviteRoute from "../../../views/InviteRoute.astro";
+
+// Rendered on demand: the referrer's name comes from the URL.
+export const prerender = false;
+---
+
+<InviteRoute lang="en" raw={Astro.params.code} />

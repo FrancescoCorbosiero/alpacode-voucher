@@ -1,0 +1,57 @@
+---
+/* "Scegli come riceverlo:" — the flyer's three payout methods, made
+   choosable. A real radio group (arrow keys work); the choice is mirrored
+   into the forms below by src/scripts/landing.ts. */
+import type { PayoutOption } from "../data/shared";
+import Icon from "./Icon.astro";
+
+interface Props {
+  kicker: string;
+  title: string;
+  lede: string;
+  options: PayoutOption[];
+  chosen: string;
+  choose: string;
+}
+const { kicker, title, lede, options, chosen, choose } = Astro.props;
+---
+
+<section class="rf-section rf-payout" id="cashback" aria-labelledby="payout-title">
+  <div class="wrap-wide">
+    <div class="section-head">
+      <div>
+        <div class="sec-num">{kicker}</div>
+        <h2 id="payout-title">{title}</h2>
+      </div>
+      <p class="lede">{lede}</p>
+    </div>
+
+    <fieldset class="rf-payout-grid" data-payout-picker>
+      <legend class="visually-hidden">{title}</legend>
+      {
+        options.map((o, i) => (
+          <label class="rf-payout-option">
+            <input class="visually-hidden" type="radio" name="payout-pick" value={o.id} checked={i === 0} />
+            <span class="rf-payout-icon" aria-hidden="true">
+              <Icon name={o.icon} size={30} />
+            </span>
+            <span class="rf-payout-text">
+              <span class="rf-payout-title">{o.title}</span>
+              <span class="rf-payout-body">{o.body}</span>
+              {o.note && <span class="rf-payout-note">({o.note})</span>}
+            </span>
+            <span class="rf-payout-state" aria-hidden="true">
+              <span class="rf-payout-state-off">{choose}</span>
+              <span class="rf-payout-state-on">
+                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square">
+                  <path d="m3 8.5 3.2 3.2L13 4.8" />
+                </svg>
+                {chosen}
+              </span>
+            </span>
+          </label>
+        ))
+      }
+    </fieldset>
+  </div>
+</section>

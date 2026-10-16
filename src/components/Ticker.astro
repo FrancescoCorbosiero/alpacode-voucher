@@ -1,0 +1,23 @@
+---
+/* Marquee band (same markup as alpacode-website's Ticker.astro). The set
+   is duplicated so the loop wraps seamlessly at -50%. Decorative: the
+   words repeat what the page already says. */
+interface Props {
+  items: string[];
+}
+const { items } = Astro.props;
+const loop = [...items, ...items];
+---
+
+<div class="ticker" aria-hidden="true" style={`--items:${items.length}`}>
+  <div class="ticker-track">
+    {
+      loop.map((t) => (
+        <span class="ticker-item">
+          <span class="tick" />
+          {t}
+        </span>
+      ))
+    }
+  </div>
+</div>

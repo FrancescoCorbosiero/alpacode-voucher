@@ -1,0 +1,24 @@
+---
+import Layout from "../components/Layout.astro";
+import Landing from "../views/Landing.astro";
+import { landing } from "../data/landing";
+import { faqPageSchema, webPageSchema } from "../lib/schema";
+
+const lang = "it" as const;
+const c = landing[lang];
+const site = Astro.site?.href ?? "https://voucher.alpacode.it/";
+---
+
+<Layout
+  lang={lang}
+  title={c.meta.title}
+  description={c.meta.description}
+  paths={{ it: "/", en: "/en/" }}
+  ogImage={c.meta.ogImage}
+  ogAlt={c.meta.ogAlt}
+  jsonLd={[webPageSchema({ url: site, name: c.meta.title, description: c.meta.description, lang }), faqPageSchema(c.faq.items)]}
+  ctaLabel={c.headerCta}
+  ctaHref="#segnala"
+>
+  <Landing lang={lang} />
+</Layout>

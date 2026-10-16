@@ -1,0 +1,326 @@
+---
+/* ============================================================
+   The signature element: the flyer's "Invia il tuo link unico",
+   made real. Two ways in (tabs):
+   - "Condividi il tuo link": name + email -> the API issues a
+     personal invite link (/invito/MARIO-7K2QX). A live chat-bubble
+     preview shows, as you type, exactly what the friend receives.
+   - "Mandaci tu i contatti": the friend's details, with an explicit
+     "they agreed to be contacted" tick.
+   Both end on the same share panel: link + copy, editable message,
+   WhatsApp / Telegram / email / native share, and a QR to scan.
+   Behaviour: src/scripts/landing.ts. Copy: src/data/landing.ts.
+   ============================================================ */
+import type { Lang } from "../i18n/types";
+import { landing } from "../data/landing";
+import { shared } from "../data/shared";
+import { localizePath } from "../i18n/utils";
+import Icon from "./Icon.astro";
+import ConsentLabel from "./ConsentLabel.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = landing[lang].studio;
+const f = shared[lang].forms;
+const payouts = shared[lang].payouts;
+const site = (Astro.site?.href ?? "https://voucher.alpacode.it/").replace(/\/$/, "");
+const domain = new URL(site).host;
+const privacyHref = localizePath("privacy", lang);
+const ogThumb = lang === "it" ? "/og-invito.jpg" : "/og-invito-en.jpg";
+const invitePrefix = `${domain}${lang === "en" ? "/en" : ""}/invito/`;
+const previewText = c.result.message.replace("{link}", `${invitePrefix}…`);
+
+/* Strings the script needs at runtime — still owned by the data layer. */
+const i18n = {
+  lang,
+  site,
+  message: c.result.message,
+  emailSubject: c.result.emailSubject,
+  resultTitle: c.result.title,
+  welcomeBack: c.result.welcomeBack,
+  copied: c.result.copied,
+  copy: c.result.copy,
+  cardTitle: c.preview.cardTitle,
+  cardTitleAnon: c.preview.cardTitleAnon,
+  pending: c.preview.pending,
+  directBody: c.direct.successBody,
+  sending: f.sending,
+  errors: f.errors,
+  qrLabel: landing[lang].qr.personalQrAlt,
+  qrTitle: landing[lang].qr.personalTitle,
+  qrBody: landing[lang].qr.personalBody,
+  invitePrefix,
+};
+---
+
+<section class="rf-section rf-studio" id="segnala" aria-labelledby="studio-title" data-studio>
+  <script type="application/json" is:inline data-studio-i18n set:html={JSON.stringify(i18n)} />
+  <div class="wrap-wide">
+    <div class="rf-studio-grid">
+      <div class="rf-studio-intro">
+        <div class="sec-num">{c.kicker}</div>
+        <h2 id="studio-title" data-split="lines">{c.title}</h2>
+        <p class="rf-studio-lede">{c.lede}</p>
+        <ul class="rf-studio-points">
+          {c.points.map((p) => <li>{p}</li>)}
+        </ul>
+
+        <figure class="rf-preview" aria-label={c.preview.label}>
+          <figcaption class="rf-preview-label">{c.preview.label}</figcaption>
+          <div class="rf-preview-screen">
+            <div class="rf-bubble">
+              <p class="rf-bubble-text" data-preview-text>{previewText}</p>
+              <div class="rf-bubble-card">
+                <img src={ogThumb} alt="" width="1200" height="630" loading="lazy" decoding="async" />
+                <span class="rf-bubble-card-body">
+                  <span class="rf-bubble-card-title" data-preview-title>{c.preview.cardTitleAnon}</span>
+                  <span class="rf-bubble-card-desc">{c.preview.cardDesc}</span>
+                  <span class="rf-bubble-card-domain">{domain}</span>
+                </span>
+              </div>
+              <span class="rf-bubble-meta">
+                <span data-preview-time>09:41</span>
+                <svg viewBox="0 0 18 10" width="18" height="10" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                  <path d="m1 5.2 2.8 2.8L9.6 2M7.2 8l.6.6L14.6 2"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </figure>
+      </div>
+
+      <div class="rf-studio-box">
+        <div class="rf-forms" data-forms>
+          <div class="rf-tabs" role="tablist" aria-label={c.title}>
+            <button class="rf-tab" type="button" role="tab" id="tab-link" aria-controls="panel-link" aria-selected="true" data-tab="link">
+              <Icon name="link" size={18} />
+              <span>{c.tabs.link}</span>
+              <span class="rf-tab-badge">{c.tabs.linkBadge}</span>
+            </button>
+            <button
+              class="rf-tab"
+              type="button"
+              role="tab"
+              id="tab-direct"
+              aria-controls="panel-direct"
+              aria-selected="false"
+              tabindex="-1"
+              data-tab="direct"
+            >
+              <Icon name="user" size={18} />
+              <span>{c.tabs.direct}</span>
+            </button>
+          </div>
+
+          {/* ---------- Tab 1 — personal link ---------- */}
+          <div class="rf-panel" role="tabpanel" id="panel-link" aria-labelledby="tab-link" data-panel="link">
+            <form class="rf-form" data-form="referrer" novalidate>
+              <h3 class="rf-form-title">{c.link.title}</h3>
+              <p class="rf-form-intro">{c.link.intro}</p>
+              <input type="text" name="website" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
+
+              <div class="field">
+                <label for="rl-name">{f.name}</label>
+                <input id="rl-name" name="name" required autocomplete="name" placeholder={f.namePh} maxlength="120" data-preview-name />
+              </div>
+              <div class="field">
+                <label for="rl-email">{f.email}</label>
+                <input id="rl-email" name="email" type="email" required autocomplete="email" inputmode="email" placeholder={f.emailPh} maxlength="200" />
+              </div>
+              <div class="field">
+                <label for="rl-phone">{f.phoneOptional}</label>
+                <input id="rl-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder={f.phonePh} maxlength="40" />
+              </div>
+
+              <fieldset class="rf-choice">
+                <legend>{f.payoutLegend}</legend>
+                <div class="rf-chips">
+                  {
+                    payouts.map((p, i) => (
+                      <label class="rf-chip">
+                        <input type="radio" name="payout" value={p.id} checked={i === 0} />
+                        <span>{p.short}</span>
+                      </label>
+                    ))
+                  }
+                </div>
+              </fieldset>
+
+              <div class="rf-consent">
+                <input type="checkbox" id="rl-consent" name="consent" required />
+                <label for="rl-consent">
+                  <ConsentLabel text={f.consent} privacyHref={privacyHref} privacyLabel={f.privacyLink} termsHref="#condizioni" termsLabel={f.termsLink} />
+                </label>
+              </div>
+
+              <div class="rf-submit">
+                <button class="btn btn-blue btn-lg" type="submit" data-submit>
+                  <span data-submit-label>{c.link.submit}</span> <span class="arrow" aria-hidden="true">→</span>
+                </button>
+                <p class="rf-status" role="status" aria-live="polite" data-status></p>
+              </div>
+            </form>
+          </div>
+
+          {/* ---------- Tab 2 — direct referral ---------- */}
+          <div class="rf-panel" role="tabpanel" id="panel-direct" aria-labelledby="tab-direct" data-panel="direct" hidden>
+            <form class="rf-form" data-form="direct" novalidate>
+              <h3 class="rf-form-title">{c.direct.title}</h3>
+              <p class="rf-form-intro">{c.direct.intro}</p>
+              <input type="text" name="website" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
+
+              <fieldset class="rf-group">
+                <legend>{c.direct.yourLegend}</legend>
+                <div class="field">
+                  <label for="rd-name">{f.name}</label>
+                  <input id="rd-name" name="name" required autocomplete="name" placeholder={f.namePh} maxlength="120" />
+                </div>
+                <div class="field">
+                  <label for="rd-email">{f.email}</label>
+                  <input id="rd-email" name="email" type="email" required autocomplete="email" inputmode="email" placeholder={f.emailPh} maxlength="200" />
+                </div>
+                <div class="field">
+                  <label for="rd-phone">{f.phoneOptional}</label>
+                  <input id="rd-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder={f.phonePh} maxlength="40" />
+                </div>
+              </fieldset>
+
+              <fieldset class="rf-group">
+                <legend>{c.direct.friendLegend}</legend>
+                <div class="field">
+                  <label for="rd-fname">{c.direct.friendName}</label>
+                  <input id="rd-fname" name="friendName" required autocomplete="off" placeholder={c.direct.friendNamePh} maxlength="120" />
+                </div>
+                <div class="rf-field-pair">
+                  <div class="field">
+                    <label for="rd-femail">{c.direct.friendEmail}</label>
+                    <input id="rd-femail" name="friendEmail" type="email" autocomplete="off" inputmode="email" maxlength="200" data-contact />
+                  </div>
+                  <div class="field">
+                    <label for="rd-fphone">{c.direct.friendPhone}</label>
+                    <input id="rd-fphone" name="friendPhone" type="tel" autocomplete="off" inputmode="tel" maxlength="40" data-contact />
+                  </div>
+                </div>
+                <p class="rf-hint">{c.direct.contactHint}</p>
+
+                <fieldset class="rf-choice">
+                  <legend>{c.direct.needLegend}</legend>
+                  <div class="rf-chips">
+                    {
+                      c.direct.needs.map((n, i) => (
+                        <label class="rf-chip">
+                          <input type="radio" name="need" value={n.id} checked={i === 0} />
+                          <span>{n.label}</span>
+                        </label>
+                      ))
+                    }
+                  </div>
+                </fieldset>
+
+                <div class="field">
+                  <label for="rd-note">{c.direct.note}</label>
+                  <textarea id="rd-note" name="note" rows="2" placeholder={c.direct.notePh} maxlength="1500"></textarea>
+                </div>
+              </fieldset>
+
+              <fieldset class="rf-choice">
+                <legend>{f.payoutLegend}</legend>
+                <div class="rf-chips">
+                  {
+                    payouts.map((p, i) => (
+                      <label class="rf-chip">
+                        <input type="radio" name="payout" value={p.id} checked={i === 0} />
+                        <span>{p.short}</span>
+                      </label>
+                    ))
+                  }
+                </div>
+              </fieldset>
+
+              <div class="rf-consent">
+                <input type="checkbox" id="rd-fconsent" name="friendConsent" required />
+                <label for="rd-fconsent">{c.direct.friendConsent}</label>
+              </div>
+              <div class="rf-consent">
+                <input type="checkbox" id="rd-consent" name="consent" required />
+                <label for="rd-consent">
+                  <ConsentLabel text={f.consent} privacyHref={privacyHref} privacyLabel={f.privacyLink} termsHref="#condizioni" termsLabel={f.termsLink} />
+                </label>
+              </div>
+
+              <div class="rf-submit">
+                <button class="btn btn-blue btn-lg" type="submit" data-submit>
+                  <span data-submit-label>{c.direct.submit}</span> <span class="arrow" aria-hidden="true">→</span>
+                </button>
+                <p class="rf-status" role="status" aria-live="polite" data-status></p>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* ---------- Result — the share panel ---------- */}
+        <div class="rf-result" data-result hidden>
+          <div class="rf-result-notice" data-result-notice hidden>
+            <strong>{c.direct.successTitle}</strong>
+            <span data-result-notice-body></span>
+            <span>{c.direct.successLink}</span>
+          </div>
+          <h3 class="rf-result-title" tabindex="-1" data-result-title>{c.result.title}</h3>
+          <p class="rf-result-lede">{c.result.lede}</p>
+
+          <div class="rf-linkbox">
+            <label class="rf-mini-label" for="rf-link">{c.result.linkLabel}</label>
+            <div class="rf-linkbox-row">
+              <input id="rf-link" class="rf-link-input" readonly data-result-link value="" />
+              <button class="btn btn-blue rf-copy" type="button" data-copy>
+                <Icon name="copy" size={18} />
+                <span data-copy-label>{c.result.copy}</span>
+              </button>
+            </div>
+            <p class="rf-code">{c.result.codeLabel}: <strong data-result-code></strong></p>
+          </div>
+
+          <div class="rf-message">
+            <label class="rf-mini-label" for="rf-message">{c.result.messageLabel}</label>
+            <textarea id="rf-message" rows="4" data-result-message></textarea>
+          </div>
+
+          <div class="rf-share" role="group" aria-label={c.result.shareLabel}>
+            <span class="rf-mini-label" aria-hidden="true">{c.result.shareLabel}</span>
+            <div class="rf-share-row">
+              <a class="rf-share-btn rf-share-btn--wa" data-share="whatsapp" href="#" target="_blank" rel="noopener">
+                <Icon name="whatsapp" size={20} />
+                {c.result.whatsapp}
+              </a>
+              <a class="rf-share-btn" data-share="telegram" href="#" target="_blank" rel="noopener">
+                <Icon name="telegram" size={20} />
+                {c.result.telegram}
+              </a>
+              <a class="rf-share-btn" data-share="email" href="#">
+                <Icon name="mail" size={20} />
+                {c.result.email}
+              </a>
+              <button class="rf-share-btn" type="button" data-share="native" hidden>
+                <Icon name="share" size={20} />
+                {c.result.more}
+              </button>
+            </div>
+          </div>
+
+          <div class="rf-result-qr">
+            <div class="rf-result-qr-code" data-result-qr></div>
+            <div class="rf-result-qr-text">
+              <strong>{c.result.qrTitle}</strong>
+              <p>{c.result.qrBody}</p>
+            </div>
+          </div>
+
+          <p class="rf-keep">{c.result.keep}</p>
+          <button class="rf-reset" type="button" data-reset>{c.result.reset}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

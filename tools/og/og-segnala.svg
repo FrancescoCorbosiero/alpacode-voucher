@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="fade" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#F0F3F9" stop-opacity="1"/>
+      <stop offset="1" stop-color="#F0F3F9" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="photo"><rect x="740" y="0" width="460" height="630"/></clipPath>
+  </defs>
+  <rect width="1200" height="630" fill="#F0F3F9"/>
+  <!-- Photo (the flyer's), right edge, dissolving into the paper -->
+  <g clip-path="url(#photo)">
+    <image href="{{PHOTO}}" x="740" y="-70" width="460" height="829" preserveAspectRatio="xMidYMid slice"/>
+  </g>
+  <rect x="740" y="0" width="170" height="630" fill="url(#fade)"/>
+  <!-- Top strut -->
+  <rect x="0" y="0" width="1200" height="8" fill="#3B72E9"/>
+  <!-- Lockup -->
+  <g transform="translate(64 44)">
+    <text x="0" y="29" font-family="Archivo Black" font-size="37" fill="#0B0E14" textLength="200" lengthAdjust="spacingAndGlyphs">ALPACODE</text>
+    <rect x="0" y="35" width="200" height="5.5" fill="#3B72E9"/>
+    <text x="0.5" y="56.5" font-family="Manrope" font-weight="800" font-size="12.5" fill="#0B0E14" textLength="199" lengthAdjust="spacing">SOLUZIONI DIGITALI</text>
+  </g>
+  <!-- Kicker -->
+  <rect x="64" y="144" width="24" height="3" fill="#3B72E9"/>
+  <text x="100" y="151" font-family="Manrope" font-weight="700" font-size="19" fill="#0B0E14">Segnala un amico · Programma cashback</text>
+  <!-- Headline -->
+  <g font-family="Archivo Black" font-size="62" letter-spacing="-2" fill="#0B0E14">
+    <text x="62" y="222">Conosci qualcuno</text>
+    <text x="62" y="288">a cui potrebbe</text>
+    <text x="62" y="354">servire un <tspan fill="#3B72E9">sito web?</tspan></text>
+  </g>
+  <text x="64" y="398" font-family="Manrope" font-weight="800" font-size="24" fill="#2756C2">Se diventa nostro cliente, ricevi</text>
+  <!-- Sticker -->
+  <g transform="translate(112 474)">
+    <g fill="#3B72E9">
+      <rect x="-54" y="36" width="30" height="7" transform="rotate(24 -24 39)"/>
+      <rect x="-60" y="58" width="30" height="7" transform="rotate(4 -30 61)"/>
+      <rect x="-54" y="80" width="30" height="7" transform="rotate(-18 -24 83)"/>
+      <rect x="382" y="-12" width="30" height="7" transform="rotate(-50 382 -8)"/>
+      <rect x="398" y="8" width="30" height="7" transform="rotate(-24 398 12)"/>
+    </g>
+    <g transform="rotate(-4 176 56)">
+      <rect x="0" y="0" width="352" height="116" fill="#0B0E14"/>
+      <text x="176" y="101" text-anchor="middle" font-family="Archivo Black" font-size="116" letter-spacing="-6" fill="#FFFFFF">100€</text>
+    </g>
+    <g transform="rotate(-8 40 -10)">
+      <rect x="-26" y="-36" width="150" height="46" fill="#3B72E9"/>
+      <text x="49" y="-3" text-anchor="middle" font-family="Archivo Black" font-size="26" fill="#FFFFFF">FINO A</text>
+    </g>
+    <g transform="rotate(-5 312 130)">
+      <rect x="162" y="102" width="300" height="52" fill="#3B72E9"/>
+      <text x="184" y="140" font-family="Archivo Black" font-size="28" fill="#FFFFFF">DI CASHBACK</text>
+      <path d="M412 128 h26 m-10 -10 l10 10 l-10 10" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="square"/>
+    </g>
+  </g>
+</svg>

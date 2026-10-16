@@ -1,0 +1,37 @@
+{
+  "name": "alpacode-voucher",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Alpacode · Segnala un amico — landing del programma cashback (fino a 100 €) con link di invito personali.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "node ./dist/server/entry.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "og": "node tools/og/render.mjs",
+    "astro": "astro",
+    "media": "node tools/media/render.mjs"
+  },
+  "dependencies": {
+    "@astrojs/node": "^9.5.5",
+    "@aws-sdk/client-sesv2": "^3.1051.0",
+    "@fontsource/archivo-black": "^5.2.8",
+    "@fontsource/caveat": "^5.3.0",
+    "@fontsource/manrope": "^5.2.8",
+    "astro": "^5.18.1",
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.26",
+    "sharp": "^0.34.5",
+    "uqr": "^0.1.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@types/node": "^25.9.9",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

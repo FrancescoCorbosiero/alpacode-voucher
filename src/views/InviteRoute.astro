@@ -1,0 +1,47 @@
+---
+/* Shared body of /invito/[...code] and /en/invito/[...code]: validates the
+   code, derives the referrer's first name and renders the page with a
+   personalised <title> — which is what WhatsApp, Telegram & co. show as
+   the bold line of the link preview ("Mario ti ha consigliato Alpacode"). */
+import Layout from "../components/Layout.astro";
+import Invite from "./Invite.astro";
+import { invite } from "../data/invite";
+import { fill } from "../i18n/utils";
+import { normalizeCode, nameFromCode, invitePath, firstName } from "../lib/referral-code";
+import { referrerByCode } from "../lib/server/ledger";
+import type { Lang } from "../i18n/types";
+
+interface Props {
+  lang: Lang;
+  raw: string | undefined;
+}
+const { lang, raw } = Astro.props;
+const code = normalizeCode(raw?.split("/")[0]);
+// The name as the referrer typed it (accents included) when the ledger knows
+// the code; otherwise the ASCII prefix of the code itself ("NICCOLO").
+const owner = code ? await referrerByCode(code) : null;
+const name = owner ? firstName(owner.name) || nameFromCode(code ?? "") : code ? nameFromCode(code) : null;
+const c = invite[lang];
+const title = name ? fill(c.meta.title, { name }) : c.meta.titleAnon;
+const paths: Record<Lang, string> = code
+  ? { it: invitePath(code, "it"), en: invitePath(code, "en") }
+  : { it: "/invito/", en: "/en/invito/" };
+
+// Personal pages: never indexed, cacheable for a few minutes at the edge.
+Astro.response.headers.set("Cache-Control", "public, max-age=300");
+Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow");
+---
+
+<Layout
+  lang={lang}
+  title={title}
+  description={c.meta.description}
+  paths={paths}
+  ogImage={c.meta.ogImage}
+  ogAlt={c.meta.ogAlt}
+  noindex
+  ctaLabel={c.headerCta}
+  ctaHref="#progetto"
+>
+  <Invite lang={lang} code={code} name={name} />
+</Layout>

@@ -1,0 +1,198 @@
+---
+/* Footer as on the flyer: lockup, the three studio values, the alpaca,
+   then the "Note e condizioni" (#condizioni — the forms link here) and
+   the fine print. Ink band, blue strut on top. */
+import type { Lang } from "../i18n/types";
+import { shared } from "../data/shared";
+import { terms } from "../data/terms";
+import { business, websiteLinks } from "../data/business";
+import { localizePath } from "../i18n/utils";
+import Lockup from "./Lockup.astro";
+import Icon from "./Icon.astro";
+import Alpaca from "./Alpaca.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = shared[lang].footer;
+const year = new Date().getFullYear();
+const programPrivacy = localizePath("privacy", lang);
+---
+
+<footer class="site-footer">
+  <div class="wrap-wide">
+    <div class="foot-top">
+      <a class="foot-brand" href={localizePath("", lang)} aria-label="Alpacode · Soluzioni Digitali">
+        <Lockup tone="paper" width={176} />
+      </a>
+      <ul class="foot-values">
+        {
+          c.values.map((v) => (
+            <li class="foot-value">
+              <Icon name={v.icon} size={30} class="foot-value-icon" />
+              <span>{v.text}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <Alpaca class="foot-alpaca" width={46} />
+    </div>
+
+    <section class="foot-terms" id="condizioni" aria-labelledby="condizioni-title">
+      <h2 class="foot-terms-title" id="condizioni-title">{c.termsTitle}</h2>
+      <ol class="foot-terms-list">
+        {terms[lang].map((t) => <li>{t}</li>)}
+      </ol>
+    </section>
+
+    <div class="foot-bottom">
+      <span>© {year} {c.rights} · {business.locations[lang]}</span>
+      <ul class="foot-legal">
+        <li><a href={programPrivacy}>{c.programPrivacy}</a></li>
+        <li><a href={websiteLinks.privacy[lang]}>{c.sitePrivacy}</a></li>
+        <li><a href={websiteLinks.cookie[lang]}>{c.cookie}</a></li>
+        <li><a href={websiteLinks.terms[lang]}>{c.siteTerms}</a></li>
+        <li><a href={`mailto:${business.email}`}>{business.email}</a></li>
+        <li><a href={websiteLinks.home[lang]}>{c.backToSite} →</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    background: var(--ink);
+    color: var(--on-ink);
+    padding: 64px 0 0;
+  }
+  .site-footer::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: var(--strut);
+    background: var(--blue);
+  }
+  .foot-top {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 40px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--on-ink-rule);
+  }
+  .foot-brand {
+    display: block;
+  }
+  .foot-values {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .foot-value {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 6px 28px;
+    border-left: 1px solid var(--on-ink-rule);
+    font-size: 15px;
+    line-height: 1.35;
+    color: var(--on-ink-mute);
+  }
+  .foot-value :global(.foot-value-icon) {
+    flex: none;
+    color: var(--blue);
+  }
+  .foot-value span {
+    max-width: 18em;
+  }
+  .site-footer :global(.foot-alpaca) {
+    color: var(--on-ink);
+  }
+
+  .foot-terms {
+    padding: 40px 0 44px;
+  }
+  .foot-terms-title {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0;
+    margin-bottom: 16px;
+  }
+  .foot-terms-list {
+    margin: 0;
+    padding-left: 1.4em;
+    columns: 2;
+    column-gap: 56px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--on-ink-mute);
+  }
+  .foot-terms-list li {
+    break-inside: avoid;
+    padding: 0 0 8px 4px;
+  }
+  .foot-terms-list li::marker {
+    color: var(--blue);
+    font-weight: 800;
+  }
+
+  .foot-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px 32px;
+    padding: 22px 0 28px;
+    border-top: 1px solid var(--on-ink-rule);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--on-ink-faint);
+  }
+  .foot-legal {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+  }
+  .foot-legal a {
+    color: var(--on-ink-mute);
+    transition: color 0.2s var(--ease);
+  }
+  .foot-legal a:hover {
+    color: var(--on-ink);
+  }
+
+  @media (max-width: 1080px) {
+    .foot-top {
+      grid-template-columns: 1fr auto;
+    }
+    .foot-values {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .foot-value:first-child {
+      border-left: 0;
+      padding-left: 0;
+    }
+  }
+  @media (max-width: 760px) {
+    .foot-values {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    .foot-value {
+      border-left: 0;
+      padding: 0;
+    }
+    .foot-terms-list {
+      columns: 1;
+    }
+  }
+</style>

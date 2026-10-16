@@ -1,0 +1,66 @@
+---
+/* "Come funziona?" — the flyer's four numbered steps, joined by a rail
+   that fills as you scroll ([data-progress], see lib/motion.ts). On the
+   invite page `here` marks the step the visitor is living right now. */
+import type { Step } from "../data/shared";
+import Icon from "./Icon.astro";
+
+interface Props {
+  kicker: string;
+  title: string;
+  lede: string;
+  items: Step[];
+  /** Index of the step to badge as "you are here". */
+  here?: number;
+  hereLabel?: string;
+}
+const { kicker, title, lede, items, here, hereLabel } = Astro.props;
+---
+
+<section class="rf-section rf-steps-sec" id="come-funziona" aria-labelledby="steps-title">
+  <div class="wrap-wide">
+    <div class="rf-steps-head">
+      <div class="sec-num">{kicker}</div>
+      <div class="rf-steps-title">
+        <h2 id="steps-title" data-split="wipe">{title}</h2>
+        <span class="rf-steps-rule" aria-hidden="true" data-strut></span>
+      </div>
+      <p class="rf-steps-lede">{lede}</p>
+    </div>
+
+    <div class="rf-steps-track" data-progress>
+      <span class="rf-steps-rail" aria-hidden="true"><span class="rf-steps-fill" data-progress-fill></span></span>
+      <ol class="rf-steps">
+        {
+          items.map((s, i) => (
+            <li
+              class:list={["rf-step", { "is-here": here === i }]}
+              data-progress-step
+              aria-current={here === i ? "step" : undefined}
+            >
+              <div class="rf-step-top">
+                <span class="rf-step-n" aria-hidden="true">
+                  {i + 1}
+                </span>
+                <span class="rf-step-icon" aria-hidden="true">
+                  <Icon name={s.icon} size={26} />
+                </span>
+                {i < items.length - 1 && (
+                  <span class="rf-step-arrow" aria-hidden="true">
+                    →
+                  </span>
+                )}
+              </div>
+              {here === i && hereLabel && <span class="rf-step-here">{hereLabel}</span>}
+              <h3>
+                <span class="visually-hidden">{i + 1}. </span>
+                {s.t}
+              </h3>
+              <p>{s.d}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>

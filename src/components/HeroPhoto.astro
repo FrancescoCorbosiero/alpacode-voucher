@@ -1,0 +1,36 @@
+---
+/* The flyer's photo — two friends at a laptop whose lid carries the
+   campaign line. Static responsive variants from tools/media (see the
+   header of tools/media/render.mjs for why they aren't built by Astro).
+   The left edge dissolves into the paper, as it does on the flyer. */
+interface Props {
+  alt: string;
+  class?: string;
+  /** The hero image is the LCP: load it eagerly, at high priority. */
+  priority?: boolean;
+}
+const { alt, class: cls, priority = true } = Astro.props;
+const name = "amici-laptop";
+const widths = [480, 800, 1180];
+const set = (ext: string) => widths.map((w) => `/media/${name}-${w}.${ext} ${w}w`).join(", ");
+const sizes = "(max-width: 900px) 92vw, 40vw";
+---
+
+<figure class:list={["rf-photo", cls]}>
+  <picture>
+    <source type="image/avif" srcset={set("avif")} sizes={sizes} />
+    <source type="image/webp" srcset={set("webp")} sizes={sizes} />
+    <img
+      src={`/media/${name}-800.jpg`}
+      srcset={set("jpg")}
+      sizes={sizes}
+      alt={alt}
+      width="1180"
+      height="2126"
+      loading={priority ? "eager" : "lazy"}
+      fetchpriority={priority ? "high" : "auto"}
+      decoding="async"
+      class="rf-photo-img"
+    />
+  </picture>
+</figure>
