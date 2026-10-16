@@ -1,0 +1,60 @@
+/* ============================================================
+   Alpacode — design tokens (lifted 1:1 from alpacode-website,
+   src/styles/tokens.css). The blue strut (#3B72E9, sampled from
+   the logo) is the brand's connective tissue; neutrals are
+   "blueprint paper": a cool off-white with a breath of the brand
+   blue, and a blue-black ink. Keep them in sync with the site.
+   ============================================================ */
+:root {
+  /* Palette */
+  --ink: #0b0e14;
+  --ink-2: #1a1f2b;
+  --paper: #f0f3f9;
+  --paper-2: #e4e9f3;
+  --paper-3: #d5dcea;
+  --rule: #bec8da;
+  --mute: #687387;
+  --mute-2: #465065;
+  --blue: #3b72e9;
+  --blue-deep: #2756c2;
+  --blue-soft: #dce5fa;
+  /* The brand blue a hair deeper, for fills that carry small white text
+     (buttons, pills): #3b72e9 gives 4.4:1 with white, this gives 4.6:1 —
+     WCAG AA — and reads as the same blue. */
+  --blue-fill: #376fe4;
+  /* Ink-band tints (paper at reduced strength on --ink). */
+  --on-ink: #f0f3f9;
+  --on-ink-mute: rgba(240, 243, 249, 0.66);
+  --on-ink-faint: rgba(240, 243, 249, 0.42);
+  --on-ink-rule: rgba(240, 243, 249, 0.16);
+  /* The partner program's accent — used only on the cross-link card that
+     points there, as the house rule for "portal" cards asks. */
+  --partner: #2fe08a;
+
+  /* Type */
+  --display: "Archivo Black", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --sans: "Manrope", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --label: var(--sans);
+  /* The campaign's handwritten line ("Più persone nel mondo digitale.
+     Insieme.") — the one deliberate third face, as on the printed flyer. */
+  --hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+
+  /* Scale */
+  --strut: 6px; /* the blue bar height */
+  --gutter: 32px;
+  --col: 1240px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.72, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  color-scheme: light;
+}
+
+@media (max-width: 720px) {
+  :root {
+    --gutter: 20px;
+  }
+}

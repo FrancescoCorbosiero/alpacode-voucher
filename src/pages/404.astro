@@ -1,0 +1,31 @@
+---
+import Layout from "../components/Layout.astro";
+import { landing } from "../data/landing";
+
+const lang = "it" as const;
+---
+
+<Layout
+  lang={lang}
+  title="Pagina non trovata — Alpacode"
+  description="Questa pagina non esiste. Torna al programma «Segnala un amico»."
+  paths={{ it: "/", en: "/en/" }}
+  ogImage={landing[lang].meta.ogImage}
+  ogAlt={landing[lang].meta.ogAlt}
+  noindex
+  ctaLabel={landing[lang].headerCta}
+  ctaHref="/#segnala"
+>
+  <div class="rf rf-legal">
+    <div class="wrap">
+      <header class="rf-legal-head">
+        <p class="sec-num">404</p>
+        <h1>Pagina non trovata.</h1>
+        <span class="bar" aria-hidden="true"></span>
+        <p>Il link potrebbe essere incompleto. Se te l'ha mandato un amico, chiedigli di ricopiarlo per intero.</p>
+        <p lang="en">Page not found. If a friend sent you this link, ask them to copy it again in full.</p>
+      </header>
+      <a class="btn btn-blue" href="/">Vai al programma <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,27 @@
+---
+/* Renders a consent sentence whose {privacy} and {terms} placeholders
+   become links (program privacy notice, the #condizioni block). */
+interface Props {
+  text: string;
+  privacyHref: string;
+  privacyLabel: string;
+  termsHref?: string;
+  termsLabel?: string;
+}
+const { text, privacyHref, privacyLabel, termsHref, termsLabel } = Astro.props;
+const parts = text.split(/(\{privacy\}|\{terms\})/);
+---
+
+{
+  parts.map((p) =>
+    p === "{privacy}" ? (
+      <a href={privacyHref} target="_blank" rel="noopener">
+        {privacyLabel}
+      </a>
+    ) : p === "{terms}" && termsHref ? (
+      <a href={termsHref}>{termsLabel}</a>
+    ) : (
+      p
+    ),
+  )
+}

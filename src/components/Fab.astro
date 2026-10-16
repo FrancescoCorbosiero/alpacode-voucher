@@ -1,0 +1,97 @@
+---
+/* Floating actions, as on alpacode.it: WhatsApp for questions and a
+   back-to-top button that shows up after the first screen. */
+import type { Lang } from "../i18n/types";
+import { shared } from "../data/shared";
+import { business } from "../data/business";
+import Icon from "./Icon.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = shared[lang].fab;
+const waHref = `https://wa.me/${business.whatsapp}?text=${encodeURIComponent(c.whatsappText)}`;
+---
+
+<aside class="fab" data-fab aria-label={c.label}>
+  <a class="fab-btn fab-wa" href={waHref} target="_blank" rel="noopener" aria-label={c.whatsapp} title={c.whatsapp}>
+    <Icon name="whatsapp" size={24} />
+  </a>
+  <button class="fab-btn fab-top" type="button" data-scroll-top aria-label={c.top} title={c.top}>
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true">
+      <path d="M12 19V6M6 12l6-6 6 6"></path>
+    </svg>
+  </button>
+</aside>
+
+<style>
+  .fab {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 70;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .fab-btn {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1.5px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    cursor: pointer;
+    transition:
+      background 0.15s var(--ease),
+      border-color 0.15s var(--ease),
+      transform 0.12s var(--ease),
+      opacity 0.25s var(--ease),
+      visibility 0.25s;
+  }
+  .fab-btn:hover {
+    transform: translateY(-2px);
+  }
+  .fab-wa {
+    background: var(--blue-fill);
+    border-color: var(--blue-fill);
+    color: #fff;
+  }
+  .fab-wa:hover {
+    background: var(--blue-deep);
+    border-color: var(--blue-deep);
+  }
+  .fab-top {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+  }
+  .fab-top:global(.is-visible) {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  .fab-top:hover {
+    background: var(--blue);
+    border-color: var(--blue);
+  }
+  @media (max-width: 600px) {
+    .fab {
+      right: 14px;
+      bottom: 14px;
+      gap: 10px;
+    }
+    .fab:not(.is-past-fold) .fab-wa {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px);
+    }
+    .fab-btn {
+      width: 46px;
+      height: 46px;
+    }
+  }
+</style>

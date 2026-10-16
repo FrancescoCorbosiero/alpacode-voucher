@@ -1,0 +1,38 @@
+---
+/* The flyer's "FINO A 100€ DI CASHBACK →" badge: an ink block set at a
+   tilt, two blue tags pinned across its corners, short blue struts
+   bursting out of the sides. It stamps in on load, the amount counts up
+   (motion-safe only) and the whole thing is a link to its explanation.
+   The same component carries the invite page's "Prima call 0€". */
+interface Props {
+  pre: string;
+  amount: string;
+  post: string;
+  /** Spoken text — the parts are aria-hidden. */
+  aria: string;
+  href: string;
+  class?: string;
+}
+const { pre, amount, post, aria, href, class: cls } = Astro.props;
+// "100€" -> count to 100 with the template "{n}€"; "0€" -> nothing to count.
+const target = Number(amount.replace(/\D/g, "")) || 0;
+const template = amount.replace(/\d+/, "{n}");
+// "0€" is far narrower than its tags: anchor the bottom tag from the left so
+// it runs out to the right, as on the flyer, instead of spilling off-screen.
+const narrow = amount.replace(/\s/g, "").length <= 2;
+---
+
+<a class:list={["rf-sticker", { "rf-sticker--narrow": narrow }, cls]} href={href} aria-label={aria} data-sticker>
+  <span class="rf-burst rf-burst--l" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+  <span class="rf-burst rf-burst--r" aria-hidden="true"><i></i><i></i><i></i></span>
+  <span class="rf-sticker-pre" aria-hidden="true">{pre}</span>
+  <span class="rf-sticker-body" aria-hidden="true">
+    <span class="rf-sticker-amount">
+      <span class="rf-sticker-size">{amount}</span>
+      <span class="rf-sticker-live" data-count-to={target > 0 ? target : undefined} data-count-template={template}
+        >{amount}</span
+      >
+    </span>
+  </span>
+  <span class="rf-sticker-post" aria-hidden="true">{post} <span class="arrow">→</span></span>
+</a>

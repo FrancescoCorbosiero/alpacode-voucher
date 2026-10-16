@@ -1,0 +1,23 @@
+# build output
+dist/
+
+# astro
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+
+# environment
+.env
+.env.production
+.env.local
+
+# referral ledger written by the API in local runs
+data/
+
+# os
+.DS_Store
+Thumbs.db

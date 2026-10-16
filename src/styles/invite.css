@@ -1,0 +1,73 @@
+/* ============================================================
+   Invite page — the friend's side. Reuses the landing's language;
+   only the promise list, the "invited by" tag and the success
+   panel's referral nudge are new.
+   ============================================================ */
+.rf-promise {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.rf-promise li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border: 1px solid var(--rule);
+  background: #fff;
+  font-weight: 700;
+  font-size: 14px;
+}
+.rf-promise svg {
+  color: var(--blue);
+}
+.rf--invite .rf-hero-sticker {
+  margin-bottom: clamp(44px, 4vw, 56px);
+}
+.rf-invited {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 26px;
+  padding: 12px 16px;
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 700;
+  font-size: 14.5px;
+}
+.rf-invited .icon {
+  color: #8fb0f5;
+}
+.rf-invited.is-anon {
+  background: #fff;
+  color: var(--mute-2);
+  border: 1px solid var(--rule);
+}
+.rf-invited.is-anon .icon {
+  color: var(--blue);
+}
+.rf-result-refer {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  margin-top: 6px;
+  padding: 22px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+}
+.rf-result-refer strong {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1.1;
+}
+.rf-result-refer p {
+  color: var(--mute-2);
+  margin-bottom: 8px;
+}
+.rf--invite .rf-why {
+  padding-top: clamp(72px, 8vw, 112px);
+}

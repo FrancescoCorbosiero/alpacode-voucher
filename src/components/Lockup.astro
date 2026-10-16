@@ -1,0 +1,71 @@
+---
+/* The logo lockup as on the flyer: ALPACODE, the blue strut, SOLUZIONI
+   DIGITALI tracked out to the same width. SVG text with textLength, so
+   the two lines line up exactly in any browser and before the webfont
+   arrives. The strut grows in on load and on hover (.lockup-bar). */
+interface Props {
+  /** Ink on paper (header) or paper on ink (footer). */
+  tone?: "ink" | "paper";
+  class?: string;
+  /** Render width in CSS px; height follows the 200×58 box. */
+  width?: number;
+}
+const { tone = "ink", class: cls, width = 168 } = Astro.props;
+const height = Math.round((width * 58) / 200);
+---
+
+<svg
+  class:list={["lockup", `lockup--${tone}`, cls]}
+  viewBox="0 0 200 58"
+  width={width}
+  height={height}
+  role="img"
+  aria-label="Alpacode · Soluzioni Digitali"
+>
+  <text
+    x="0"
+    y="29"
+    class="lockup-name"
+    textLength="200"
+    lengthAdjust="spacingAndGlyphs"
+    font-size="37">ALPACODE</text
+  >
+  <rect class="lockup-bar" x="0" y="35" width="200" height="5.5"></rect>
+  <text x="0.5" y="56.5" class="lockup-sub" textLength="199" lengthAdjust="spacing" font-size="12.5"
+    >SOLUZIONI DIGITALI</text
+  >
+</svg>
+
+<style>
+  .lockup {
+    display: block;
+    overflow: visible;
+  }
+  .lockup-name {
+    font-family: var(--display);
+    fill: var(--lockup-fg, var(--ink));
+  }
+  .lockup-sub {
+    font-family: var(--sans);
+    font-weight: 800;
+    fill: var(--lockup-fg, var(--ink));
+  }
+  .lockup-bar {
+    fill: var(--blue);
+    transform-box: fill-box;
+    transform-origin: left center;
+  }
+  .lockup--paper {
+    --lockup-fg: var(--paper);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .lockup-bar {
+      animation: lockupBar 1.1s var(--ease-expo) 0.15s both;
+    }
+  }
+  @keyframes lockupBar {
+    from {
+      transform: scaleX(0);
+    }
+  }
+</style>

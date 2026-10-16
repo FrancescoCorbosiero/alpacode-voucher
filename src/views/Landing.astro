@@ -1,0 +1,150 @@
+---
+/* ============================================================
+   The landing — the printed flyer, top to bottom:
+     hero (headline, 100€ sticker, payout line, photo)
+     · "Scegli come riceverlo" · "Come funziona?"
+     · [new] the link studio (personal link / direct referral)
+     · the QR band · [new] why recommend us · [new] FAQ
+     · [new] partner cross-link · [new] final CTA
+     · footer with the flyer's values and "Note e condizioni".
+   ============================================================ */
+import type { Lang } from "../i18n/types";
+import { landing } from "../data/landing";
+import { shared } from "../data/shared";
+import { websiteLinks } from "../data/business";
+import { business } from "../data/business";
+import Sticker from "../components/Sticker.astro";
+import HeroPhoto from "../components/HeroPhoto.astro";
+import Ticker from "../components/Ticker.astro";
+import PayoutPicker from "../components/PayoutPicker.astro";
+import Steps from "../components/Steps.astro";
+import ReferralStudio from "../components/ReferralStudio.astro";
+import QrBand from "../components/QrBand.astro";
+import Why from "../components/Why.astro";
+import Faq from "../components/Faq.astro";
+import CrossCard from "../components/CrossCard.astro";
+import StickyCta from "../components/StickyCta.astro";
+import Alpaca from "../components/Alpaca.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = landing[lang];
+const s = shared[lang];
+const h = c.hero;
+const lastLine = h.lines.length - 1;
+/* "… tramite **bonifico**, **PayPal** o **buono acquisto**, …" as one run of
+   text — no template whitespace sneaking in before the commas. */
+const methods = h.payoutMethods;
+const payline: { t: string; strong?: boolean }[] = [{ t: h.payoutBefore }];
+methods.forEach((m, i) => {
+  payline.push({ t: m, strong: true });
+  if (i < methods.length - 2) payline.push({ t: h.payoutJoin.comma });
+  else if (i === methods.length - 2) payline.push({ t: h.payoutJoin.or });
+});
+payline.push({ t: h.payoutAfter });
+---
+
+<div class="rf" data-page="landing">
+  {/* ---------- HERO ---------- */}
+  <section class="rf-hero" data-hero aria-labelledby="hero-title">
+    <div class="wrap-wide rf-hero-grid">
+      <div class="rf-hero-copy">
+        <p class="sec-num rf-hero-kicker" data-intro style="--intro-d:0.02s">{h.kicker}</p>
+        <h1 class="rf-h1 intro-lines" id="hero-title">
+          {
+            h.lines.map((l, i) => (
+              <span class="line">
+                <span>
+                  {l}
+                  {i === lastLine && (
+                    <>
+                      {" "}
+                      <em>{h.accent}</em>
+                    </>
+                  )}
+                </span>
+              </span>
+            ))
+          }
+        </h1>
+        <p class="rf-lede" data-intro style="--intro-d:0.42s">
+          {h.lede} <strong>{h.ledeStrong}</strong>
+        </p>
+
+        <div class="rf-hero-sticker">
+          <Sticker pre={h.sticker.pre} amount={h.sticker.amount} post={h.sticker.post} aria={h.sticker.aria} href="#cashback" />
+        </div>
+
+        <p class="rf-payline" data-intro style="--intro-d:1.05s">
+          {payline.map((part) => (part.strong ? <strong>{part.t}</strong> : part.t))}
+        </p>
+
+        <div class="rf-hero-ctas" data-intro style="--intro-d:1.15s">
+          <a class="btn btn-blue btn-lg" href="#segnala">{h.ctaPrimary} <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn-ghost btn-lg" href="#come-funziona">{h.ctaSecondary} <span class="arrow" aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+
+      <div class="rf-hero-media" data-intro style="--intro-d:0.2s">
+        <HeroPhoto alt={h.photoAlt} />
+      </div>
+    </div>
+  </section>
+
+  <Ticker items={c.ticker} />
+
+  <PayoutPicker
+    kicker={c.payout.kicker}
+    title={c.payout.title}
+    lede={c.payout.lede}
+    options={s.payouts}
+    chosen={c.payout.chosen}
+    choose={c.payout.choose}
+  />
+
+  <Steps kicker={s.steps.kicker} title={s.steps.title} lede={s.steps.lede} items={s.steps.items} />
+
+  <div data-sticky-hide>
+    <ReferralStudio lang={lang} />
+  </div>
+
+  <QrBand lang={lang} />
+
+  <Why kicker={c.why.kicker} title={c.why.title} lede={c.why.lede} items={c.why.items} />
+
+  <Faq kicker={c.faq.kicker} title={c.faq.title} items={c.faq.items} />
+
+  <section class="rf-cross-sec" aria-label={c.cross.tag}>
+    <div class="wrap-wide">
+      <CrossCard href={websiteLinks.partner[lang]} tag={c.cross.tag} title={c.cross.title} body={c.cross.body} cta={c.cross.cta} accent="partner" />
+    </div>
+  </section>
+
+  {/* ---------- FINAL CTA ---------- */}
+  <section class="rf-final" aria-labelledby="final-title">
+    <Alpaca class="rf-final-alpaca" width={460} />
+    <div class="wrap-wide">
+      <div class="sec-num rf-final-kicker">{c.final.kicker}</div>
+      <h2 class="rf-final-display" id="final-title">
+        {c.final.line1}
+        <br />
+        <span class="rf-final-accent">{c.final.line2}</span>
+      </h2>
+      <p class="rf-final-sub">{c.final.sub}</p>
+      <div class="rf-final-actions">
+        <a class="btn btn-blue btn-lg" href="#segnala">{c.final.cta} <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn-on-ink btn-lg" href={`mailto:${business.email}?subject=${encodeURIComponent(c.final.altSubject)}`}>
+          {c.final.alt} <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <StickyCta label={c.sticky} href="#segnala" />
+</div>
+
+<script>
+  import "../scripts/landing.ts";
+</script>

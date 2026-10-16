@@ -1,0 +1,202 @@
+---
+/* ============================================================
+   The invite page — what a friend sees after tapping a shared
+   link: who sent them, what Alpacode does, the free first call,
+   and a short form. The referral code rides along with the form
+   so the referrer gets the credit.
+   ============================================================ */
+import type { Lang } from "../i18n/types";
+import { invite } from "../data/invite";
+import { shared } from "../data/shared";
+import { websiteLinks } from "../data/business";
+import { localizePath, fill } from "../i18n/utils";
+import Sticker from "../components/Sticker.astro";
+import HeroPhoto from "../components/HeroPhoto.astro";
+import Ticker from "../components/Ticker.astro";
+import Steps from "../components/Steps.astro";
+import Why from "../components/Why.astro";
+import CrossCard from "../components/CrossCard.astro";
+import StickyCta from "../components/StickyCta.astro";
+import ConsentLabel from "../components/ConsentLabel.astro";
+import Icon from "../components/Icon.astro";
+
+interface Props {
+  lang: Lang;
+  /** Validated referral code, or null. */
+  code: string | null;
+  /** Referrer's first name from the code, or null (anonymous). */
+  name: string | null;
+}
+const { lang, code, name } = Astro.props;
+const c = invite[lang];
+const s = shared[lang];
+const f = s.forms;
+const h = c.hero;
+const lines = name ? h.lines.map((l) => fill(l, { name })) : h.linesAnon;
+const kicker = name ? fill(h.kicker, { name }) : h.kickerAnon;
+const lastLine = lines.length - 1;
+const invitedBy = code ? fill(c.form.invitedBy, { name: name ?? "—", code }) : c.form.invitedByAnon;
+const privacyHref = localizePath("privacy", lang);
+
+const i18n = {
+  lang,
+  ref: code ?? "",
+  sending: f.sending,
+  errors: f.errors,
+  successBody: c.form.successBody,
+};
+---
+
+<div class="rf rf--invite" data-page="invite">
+  <section class="rf-hero rf-hero--invite" data-hero aria-labelledby="hero-title">
+    <div class="wrap-wide rf-hero-grid">
+      <div class="rf-hero-copy">
+        <p class="sec-num rf-hero-kicker" data-intro style="--intro-d:0.02s">{kicker}</p>
+        <h1 class="rf-h1 intro-lines" id="hero-title">
+          {
+            lines.map((l, i) => (
+              <span class="line">
+                <span>
+                  {l}
+                  {i === lastLine && (
+                    <>
+                      {" "}
+                      <em>{h.accent}</em>
+                    </>
+                  )}
+                </span>
+              </span>
+            ))
+          }
+        </h1>
+        <p class="rf-lede" data-intro style="--intro-d:0.42s">{h.lede}</p>
+
+        <div class="rf-hero-sticker">
+          <Sticker pre={h.sticker.pre} amount={h.sticker.amount} post={h.sticker.post} aria={h.sticker.aria} href="#progetto" />
+        </div>
+
+        <ul class="rf-promise" data-intro style="--intro-d:1.05s">
+          {
+            h.chips.map((chip) => (
+              <li>
+                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" aria-hidden="true">
+                  <path d="m3 8.5 3.2 3.2L13 4.8" />
+                </svg>
+                {chip}
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="rf-hero-ctas" data-intro style="--intro-d:1.15s">
+          <a class="btn btn-blue btn-lg" href="#progetto">{h.ctaPrimary} <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn-ghost btn-lg" href={websiteLinks.home[lang]}>{h.ctaSecondary} <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+
+      <div class="rf-hero-media" data-intro style="--intro-d:0.2s">
+        <HeroPhoto alt={h.photoAlt} />
+      </div>
+    </div>
+  </section>
+
+  <Ticker items={c.ticker} />
+
+  <Steps kicker={s.steps.kicker} title={s.steps.title} lede={s.steps.lede} items={s.steps.items} here={1} hereLabel={s.steps.here} />
+
+  <section class="rf-section rf-studio rf-invite-form" id="progetto" aria-labelledby="form-title" data-sticky-hide data-invite>
+    <script type="application/json" is:inline data-invite-i18n set:html={JSON.stringify(i18n)} />
+    <div class="wrap-wide">
+      <div class="rf-studio-grid">
+        <div class="rf-studio-intro">
+          <div class="sec-num">{c.form.kicker}</div>
+          <h2 id="form-title" data-split="lines">{c.form.title}</h2>
+          <p class="rf-studio-lede">{c.form.lede}</p>
+          <p class:list={["rf-invited", { "is-anon": !code }]}>
+            <Icon name={code ? "link" : "mail"} size={18} />
+            <span>{invitedBy}</span>
+          </p>
+        </div>
+
+        <div class="rf-studio-box">
+          <div class="rf-panel" data-forms>
+            <form class="rf-form" data-form="friend" novalidate>
+              <input type="text" name="website" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
+              <div class="field">
+                <label for="fr-name">{f.name}</label>
+                <input id="fr-name" name="name" required autocomplete="name" placeholder={f.namePh} maxlength="120" />
+              </div>
+              <div class="rf-field-pair">
+                <div class="field">
+                  <label for="fr-email">{f.email}</label>
+                  <input id="fr-email" name="email" type="email" required autocomplete="email" inputmode="email" placeholder={f.emailPh} maxlength="200" />
+                </div>
+                <div class="field">
+                  <label for="fr-phone">{c.form.phoneLabel}</label>
+                  <input id="fr-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder={f.phonePh} maxlength="40" />
+                </div>
+              </div>
+
+              <fieldset class="rf-choice">
+                <legend>{c.form.needLegend}</legend>
+                <div class="rf-chips">
+                  {
+                    c.form.needs.map((n, i) => (
+                      <label class="rf-chip">
+                        <input type="radio" name="need" value={n.id} checked={i === 0} />
+                        <span>{n.label}</span>
+                      </label>
+                    ))
+                  }
+                </div>
+              </fieldset>
+
+              <div class="field">
+                <label for="fr-message">{c.form.message}</label>
+                <textarea id="fr-message" name="message" rows="3" placeholder={c.form.messagePh} maxlength="3000"></textarea>
+              </div>
+
+              <div class="rf-consent">
+                <input type="checkbox" id="fr-consent" name="consent" required />
+                <label for="fr-consent">
+                  <ConsentLabel text={c.form.consent} privacyHref={privacyHref} privacyLabel={f.privacyLink} />
+                </label>
+              </div>
+
+              <div class="rf-submit">
+                <button class="btn btn-blue btn-lg" type="submit" data-submit>
+                  <span data-submit-label>{c.form.submit}</span> <span class="arrow" aria-hidden="true">→</span>
+                </button>
+                <p class="rf-status" role="status" aria-live="polite" data-status></p>
+              </div>
+            </form>
+          </div>
+
+          <div class="rf-result" data-result hidden>
+            <h3 class="rf-result-title" tabindex="-1" data-result-title>{c.form.successTitle}</h3>
+            <p class="rf-result-lede" data-result-body></p>
+            <div class="rf-result-refer">
+              <strong>{c.form.referTitle}</strong>
+              <p>{c.form.referBody}</p>
+              <a class="btn btn-ghost" href={localizePath("", lang)}>{c.form.referCta} <span class="arrow" aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Why kicker={c.why.kicker} title={c.why.title} lede={c.why.lede} items={c.why.items} />
+
+  <section class="rf-cross-sec" aria-label={c.cross.tag}>
+    <div class="wrap-wide">
+      <CrossCard href={localizePath("", lang)} tag={c.cross.tag} title={c.cross.title} body={c.cross.body} cta={c.cross.cta} accent="blue" />
+    </div>
+  </section>
+
+  <StickyCta label={c.sticky} href="#progetto" />
+</div>
+
+<script>
+  import "../scripts/invite.ts";
+</script>

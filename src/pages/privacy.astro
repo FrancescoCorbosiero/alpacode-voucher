@@ -1,0 +1,22 @@
+---
+import Layout from "../components/Layout.astro";
+import Privacy from "../views/Privacy.astro";
+import { privacy } from "../data/privacy";
+import { landing } from "../data/landing";
+
+const lang = "it" as const;
+const c = privacy[lang];
+---
+
+<Layout
+  lang={lang}
+  title={c.title}
+  description={c.description}
+  paths={{ it: "/privacy/", en: "/en/privacy/" }}
+  ogImage={landing[lang].meta.ogImage}
+  ogAlt={landing[lang].meta.ogAlt}
+  ctaLabel={landing[lang].headerCta}
+  ctaHref="/#segnala"
+>
+  <Privacy lang={lang} />
+</Layout>

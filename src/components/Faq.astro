@@ -1,0 +1,37 @@
+---
+/* Objections, answered from the terms — native <details>, so it works
+   without JavaScript and with the keyboard. The same items feed the
+   FAQPage JSON-LD in the page. */
+interface Props {
+  kicker: string;
+  title: string;
+  items: { q: string; a: string }[];
+}
+const { kicker, title, items } = Astro.props;
+---
+
+<section class="rf-section rf-faq" id="faq" aria-labelledby="faq-title">
+  <div class="wrap-wide">
+    <div class="rf-faq-grid">
+      <div class="section-head rf-faq-head">
+        <div>
+          <div class="sec-num">{kicker}</div>
+          <h2 id="faq-title">{title}</h2>
+        </div>
+      </div>
+      <div class="rf-faq-list">
+        {
+          items.map((f, i) => (
+            <details class="rf-faq-item" open={i === 0}>
+              <summary>
+                <span>{f.q}</span>
+                <span class="rf-faq-ic" aria-hidden="true" />
+              </summary>
+              <p>{f.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

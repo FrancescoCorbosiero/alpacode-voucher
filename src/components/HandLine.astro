@@ -1,0 +1,16 @@
+---
+/* "Più persone nel mondo digitale. Insieme." in the flyer's marker hand,
+   underlined with a blue brush stroke that draws itself in. */
+interface Props {
+  lines: string[];
+  class?: string;
+}
+const { lines, class: cls } = Astro.props;
+---
+
+<p class:list={["rf-hand", cls]}>
+  {lines.map((l) => <span>{l}</span>)}
+  <svg class="rf-hand-swoosh" viewBox="0 0 220 24" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M4 18 C 54 10, 120 6, 216 4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" pathLength="1"></path>
+  </svg>
+</p>

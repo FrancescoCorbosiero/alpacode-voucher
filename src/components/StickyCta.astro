@@ -1,0 +1,40 @@
+---
+/* Sticky CTA pill — appears once the hero is gone, steps aside while the
+   form is on screen (and after the form has done its job). */
+interface Props {
+  label: string;
+  href: string;
+}
+const { label, href } = Astro.props;
+---
+
+<div class="rf-sticky" data-sticky>
+  <a class="rf-sticky-btn" href={href}>{label} <span class="arrow" aria-hidden="true">→</span></a>
+</div>
+
+<script>
+  const sticky = document.querySelector<HTMLElement>("[data-sticky]");
+  const hero = document.querySelector<HTMLElement>("[data-hero]");
+  const target = document.querySelector<HTMLElement>("[data-sticky-hide]");
+  if (sticky && hero) {
+    let pastHero = false;
+    let onTarget = false;
+    const apply = () => sticky.classList.toggle("is-visible", pastHero && !onTarget);
+    new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => (pastHero = !e.isIntersecting));
+        apply();
+      },
+      { rootMargin: "-80px 0px 0px 0px" },
+    ).observe(hero);
+    if (target) {
+      new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => (onTarget = e.isIntersecting));
+          apply();
+        },
+        { threshold: 0.12 },
+      ).observe(target);
+    }
+  }
+</script>
