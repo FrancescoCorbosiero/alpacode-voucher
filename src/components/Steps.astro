@@ -1,9 +1,12 @@
 ---
 /* "Come funziona?" — the flyer's four numbered steps, joined by a rail
-   that fills as you scroll ([data-progress], see lib/motion.ts). On the
-   invite page `here` marks the step the visitor is living right now. */
+   that fills as you scroll ([data-progress], see lib/motion.ts). The
+   alpaca stands on the first number tile and, on desktop, leaps from
+   tile to tile as the steps light up. On the invite page `here` marks
+   the step the visitor is living right now: the alpaca waits there. */
 import type { Step } from "../data/shared";
 import Icon from "./Icon.astro";
+import Alpaca from "./Alpaca.astro";
 
 interface Props {
   kicker: string;
@@ -28,8 +31,9 @@ const { kicker, title, lede, items, here, hereLabel } = Astro.props;
       <p class="rf-steps-lede">{lede}</p>
     </div>
 
-    <div class="rf-steps-track" data-progress>
+    <div class="rf-steps-track" data-progress data-here={here} style={here ? `--here:${here}` : undefined}>
       <span class="rf-steps-rail" aria-hidden="true"><span class="rf-steps-fill" data-progress-fill></span></span>
+      <Alpaca class="rf-steps-runner" width={40} data-steps-runner />
       <ol class="rf-steps">
         {
           items.map((s, i) => (

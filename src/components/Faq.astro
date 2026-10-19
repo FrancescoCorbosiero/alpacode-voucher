@@ -1,6 +1,7 @@
 ---
 /* Objections, answered from the terms — native <details>, so it works
-   without JavaScript and with the keyboard. The same items feed the
+   without JavaScript and with the keyboard (lib/motion.ts only smooths
+   the opening; .rf-faq-a is what it tweens). The same items feed the
    FAQPage JSON-LD in the page. */
 interface Props {
   kicker: string;
@@ -27,7 +28,9 @@ const { kicker, title, items } = Astro.props;
                 <span>{f.q}</span>
                 <span class="rf-faq-ic" aria-hidden="true" />
               </summary>
-              <p>{f.a}</p>
+              <div class="rf-faq-a">
+                <p>{f.a}</p>
+              </div>
             </details>
           ))
         }

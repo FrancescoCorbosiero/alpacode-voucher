@@ -1,5 +1,6 @@
 ---
 import Layout from "../components/Layout.astro";
+import Alpaca from "../components/Alpaca.astro";
 import { landing } from "../data/landing";
 
 const lang = "it" as const;
@@ -21,7 +22,8 @@ const lang = "it" as const;
       <header class="rf-legal-head">
         <p class="sec-num">404</p>
         <h1>Pagina non trovata.</h1>
-        <span class="bar" aria-hidden="true"></span>
+        {/* The alpaca that took a wrong turn: it looks around, then waits. */}
+        <span class="bar rf-lost-bar" aria-hidden="true"><Alpaca class="rf-lost-alpaca" width={52} data-alpaca="lost" /></span>
         <p>Il link potrebbe essere incompleto. Se te l'ha mandato un amico, chiedigli di ricopiarlo per intero.</p>
         <p lang="en">Page not found. If a friend sent you this link, ask them to copy it again in full.</p>
       </header>

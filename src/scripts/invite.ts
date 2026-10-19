@@ -4,7 +4,7 @@
    rendered) travels with the request so the referrer is credited.
    ============================================================ */
 import { firstName } from "../lib/referral-code";
-import { scrollToTarget } from "../lib/motion";
+import { scrollToTarget, revealPanel, nudge, celebrate } from "../lib/motion";
 import { checked, errorText, postReferral, setBusy, setStatus, validate, value, wireLiveClear, type FormErrors } from "./forms";
 
 interface InviteI18n {
@@ -33,6 +33,7 @@ function init(): void {
     const bad = validate(form);
     if (bad) {
       setStatus(form, i18n.errors[bad.key]);
+      nudge(form.querySelectorAll(".is-invalid"));
       bad.el.focus();
       return;
     }
@@ -60,7 +61,8 @@ function init(): void {
     if (forms) forms.hidden = true;
     if (result) {
       result.hidden = false;
-      scrollToTarget(result);
+      revealPanel(result);
+      scrollToTarget(result, () => celebrate(title ?? result, { count: 24, spread: 0.85 }));
       title?.focus({ preventScroll: true });
     }
     document.querySelector("[data-sticky]")?.remove();

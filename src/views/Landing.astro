@@ -93,7 +93,7 @@ payline.push({ t: h.payoutAfter });
     </div>
   </section>
 
-  <Ticker items={c.ticker} />
+  <Ticker items={c.ticker} alpaca />
 
   <PayoutPicker
     kicker={c.payout.kicker}
@@ -123,11 +123,11 @@ payline.push({ t: h.payoutAfter });
   </section>
 
   {/* ---------- FINAL CTA ---------- */}
-  <section class="rf-final" aria-labelledby="final-title">
-    <Alpaca class="rf-final-alpaca" width={460} />
+  <section class="rf-final" aria-labelledby="final-title" data-sticky-hide>
+    <Alpaca class="rf-final-alpaca" width={460} data-alpaca="walk-in" />
     <div class="wrap-wide">
       <div class="sec-num rf-final-kicker">{c.final.kicker}</div>
-      <h2 class="rf-final-display" id="final-title">
+      <h2 class="rf-final-display" id="final-title" data-split="pop">
         {c.final.line1}
         <br />
         <span class="rf-final-accent">{c.final.line2}</span>
