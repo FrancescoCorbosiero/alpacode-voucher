@@ -20,7 +20,7 @@ const year = new Date().getFullYear();
 const programPrivacy = localizePath("privacy", lang);
 ---
 
-<footer class="site-footer">
+<footer class="site-footer" data-sticky-hide>
   <div class="wrap-wide">
     <div class="foot-top">
       <a class="foot-brand" href={localizePath("", lang)} aria-label="Alpacode · Soluzioni Digitali">
@@ -36,7 +36,7 @@ const programPrivacy = localizePath("privacy", lang);
           ))
         }
       </ul>
-      <Alpaca class="foot-alpaca" width={46} />
+      <Alpaca class="foot-alpaca" width={46} data-alpaca />
     </div>
 
     <section class="foot-terms" id="condizioni" aria-labelledby="condizioni-title">

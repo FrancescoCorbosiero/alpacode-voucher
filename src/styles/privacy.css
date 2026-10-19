@@ -75,3 +75,25 @@
     gap: 10px;
   }
 }
+
+/* 404 — the alpaca that took a wrong turn, standing on the strut. It
+   steps up on load (CSS, so no waiting on the script); motion.ts then
+   has it look around. */
+.rf-lost-bar {
+  position: relative;
+  margin-top: 78px;
+}
+.rf-lost-alpaca {
+  position: absolute;
+  left: 12px;
+  bottom: 100%;
+  width: 52px;
+  height: auto;
+  margin-bottom: -1px;
+  color: var(--ink);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rf-lost-alpaca {
+    animation: introFade 0.9s var(--ease-expo) 0.45s backwards;
+  }
+}

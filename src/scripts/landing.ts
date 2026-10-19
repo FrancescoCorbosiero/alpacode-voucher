@@ -7,12 +7,14 @@
    4. the live chat-bubble preview follows what you type;
    5. both forms post to /api/referral and end on the share panel;
    6. the share panel: copy, WhatsApp, Telegram, email, native
-      share, a QR of the invite (also swapped into the QR band);
+      share, a QR of the invite (also swapped into the QR band) —
+      a fresh link arrives decoding itself, its QR prints and the
+      page celebrates (the moves live in lib/motion.ts);
    7. a generated link is remembered in this browser only.
    ============================================================ */
 import { qrSvg } from "../lib/qr";
 import { codePrefix, firstName } from "../lib/referral-code";
-import { scrollToTarget } from "../lib/motion";
+import { scrollToTarget, panelEnter, revealPanel, nudge, scramble, printQr, celebrate } from "../lib/motion";
 import {
   checked,
   errorText,
@@ -98,12 +100,16 @@ function syncPayouts(): void {
 function tabs(root: HTMLElement): void {
   const list = $$<HTMLButtonElement>("[role='tab']", root);
   const select = (tab: HTMLButtonElement, focus = false) => {
+    const from = list.findIndex((t) => t.getAttribute("aria-selected") === "true");
+    const to = list.indexOf(tab);
     list.forEach((t) => {
       const on = t === tab;
       t.setAttribute("aria-selected", on ? "true" : "false");
       t.tabIndex = on ? 0 : -1;
       const panel = document.getElementById(t.getAttribute("aria-controls") ?? "");
       if (panel) panel.hidden = !on;
+      // The new panel slides in from the side of the tab it came from.
+      if (panel && on && from !== to) panelEnter(panel, to > from ? 1 : -1);
     });
     if (focus) tab.focus();
   };
@@ -162,7 +168,8 @@ function sharePanel(i18n: StudioI18n, onReset: () => void) {
   const bandTitle = $("[data-qr-title]");
   const bandBody = $("[data-qr-body]");
   const bandDefault = {
-    tile: bandTile?.innerHTML ?? "",
+    // The QR alone: motion.ts may have parked its scan bar in the tile.
+    tile: bandTile?.querySelector("svg")?.outerHTML ?? bandTile?.innerHTML ?? "",
     title: bandTitle?.textContent ?? "",
     body: bandBody?.textContent ?? "",
   };
@@ -248,9 +255,19 @@ function sharePanel(i18n: StudioI18n, onReset: () => void) {
       updateShares();
       if (forms) forms.hidden = true;
       if (result) result.hidden = false;
+      // The band's personal QR prints itself when it next scrolls in.
+      if (bandTile) printQr(bandTile, { trigger: true });
       if (opts.scroll && result) {
-        scrollToTarget(result);
+        // A fresh link: the panel drops in, link and code decode, the QR
+        // prints, and the burst goes off once the page has landed on it.
+        revealPanel(result);
+        if (linkEl) scramble(linkEl, data.link, 1.25);
+        if (codeEl) scramble(codeEl, data.code, 1);
+        if (qrEl) printQr(qrEl, { delay: 0.55 });
+        scrollToTarget(result, () => celebrate(titleEl ?? result));
         titleEl?.focus({ preventScroll: true });
+      } else if (qrEl) {
+        printQr(qrEl, { trigger: true });
       }
     },
   };
@@ -334,6 +351,7 @@ function init(): void {
       const bad = validate(referrer);
       if (bad) {
         setStatus(referrer, i18n.errors[bad.key]);
+        nudge(referrer.querySelectorAll(".is-invalid"));
         bad.el.focus();
         return;
       }
@@ -367,12 +385,14 @@ function init(): void {
       const contacts = $$<HTMLInputElement>("[data-contact]", direct);
       if (bad) {
         setStatus(direct, i18n.errors[bad.key]);
+        nudge(direct.querySelectorAll(".is-invalid"));
         bad.el.focus();
         return;
       }
       if (!fEmail && !fPhone) {
         contacts.forEach(markInvalid);
         setStatus(direct, i18n.errors.contactNeeded);
+        nudge(direct.querySelectorAll(".is-invalid"));
         contacts[0]?.focus();
         return;
       }
@@ -380,6 +400,7 @@ function init(): void {
         const el = contacts[0];
         if (el) markInvalid(el);
         setStatus(direct, i18n.errors.validation);
+        nudge(direct.querySelectorAll(".is-invalid"));
         el?.focus();
         return;
       }

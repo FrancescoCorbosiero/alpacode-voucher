@@ -32,7 +32,7 @@ const { kicker, title, lede, options, chosen, choose } = Astro.props;
         options.map((o, i) => (
           <label class="rf-payout-option">
             <input class="visually-hidden" type="radio" name="payout-pick" value={o.id} checked={i === 0} />
-            <span class="rf-payout-icon" aria-hidden="true">
+            <span class="rf-payout-icon" aria-hidden="true" data-pop>
               <Icon name={o.icon} size={30} />
             </span>
             <span class="rf-payout-text">

@@ -27,7 +27,7 @@ const { kicker, title, lede, items } = Astro.props;
         items.map((it) => (
           <li class="rf-why-item">
             <span class="strut-short" aria-hidden="true" />
-            <span class="rf-why-icon" aria-hidden="true">
+            <span class="rf-why-icon" aria-hidden="true" data-pop>
               <Icon name={it.icon} size={28} />
             </span>
             <h3>{it.t}</h3>

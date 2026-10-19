@@ -67,6 +67,34 @@ Cosa è stato ottimizzato:
 - **FAQ** (con JSON-LD), sezione «Il tuo amico è in buone mani», card verso il
   programma partner, CTA finale, CTA sticky, IT + EN.
 
+## Animazioni
+
+Stesso motore di alpacode.it (`src/lib/motion.ts`, metà CSS in
+`src/styles/motion.css`): GSAP (ScrollTrigger + SplitText) e Lenis, con le
+stesse regole — niente è nascosto dal CSS, sopra la piega solo keyframe
+CSS, tutto fermo con `prefers-reduced-motion`. In più, i momenti di questa
+pagina:
+
+- **l'alpaca** (`src/components/Alpaca.astro` + `src/lib/alpaca.ts`,
+  identici in alpacode-website): la sagoma del volantino, «articolata».
+  Cammina nel nastro e si gira quando cambia il verso dello scroll, salta
+  di passo in passo su «Come funziona?» (sull'invito aspetta su «Sei
+  qui»), entra dal buio nel finale, ogni tanto muove un orecchio o la
+  coda, si incuriosisce al passaggio del mouse e saltella al clic; nella
+  404 si guarda intorno;
+- il bollino da 100 € si lascia tirare dal mouse e si inclina in 3D;
+- scegliendo come ricevere il cashback, l'icona gira come una moneta;
+- l'anteprima della chat: prima «sta scrivendo…», poi arriva il messaggio;
+- il link appena generato si decodifica carattere per carattere, il QR si
+  stampa riga per riga sotto una barra di scansione e parte una festa di
+  coriandoli del brand (tratti blu, quadratini, €, mini alpaca);
+- FAQ che si aprono e chiudono morbide, pannelli dei tab che entrano dal
+  lato giusto, campi da correggere che scuotono la testa.
+
+L'API ad attributi (`data-split`, `data-reveal`, `data-pop`,
+`data-progress`, `data-print`, `data-magnetic`, `data-tilt`,
+`data-alpaca`…) è documentata in testa a `motion.ts`.
+
 ## Sviluppo
 
 ```sh
@@ -118,6 +146,8 @@ di una segnalazione.
 | Dati aziendali (email, P. IVA, WhatsApp) | `src/data/business.ts` |
 | Stili | `src/styles/landing.css`, `forms.css`, `invite.css` |
 | Comportamento | `src/scripts/landing.ts`, `invite.ts`, `forms.ts` |
+| Animazioni | `src/lib/motion.ts`, `src/styles/motion.css` |
+| L'alpaca (sagoma e movimenti, identici su alpacode.it) | `src/components/Alpaca.astro`, `src/lib/alpaca.ts` |
 | API | `src/pages/api/referral.ts`, `src/lib/server/*` |
 
 **Foto**: `tools/media/amici-laptop.jpg` è la foto del volantino, ingrandita

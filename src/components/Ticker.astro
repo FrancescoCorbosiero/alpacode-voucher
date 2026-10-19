@@ -1,23 +1,35 @@
 ---
 /* Marquee band (same markup as alpacode-website's Ticker.astro). The set
    is duplicated so the loop wraps seamlessly at -50%. Decorative: the
-   words repeat what the page already says. */
+   words repeat what the page already says. With `alpaca`, items are led
+   by the alpaca instead of a square tick (true = one per set, evenly
+   spaced from the second item, so the first is on screen when the band
+   arrives): it walks along with the band and turns round when the band
+   does (lib/motion.ts). */
+import Alpaca from "./Alpaca.astro";
+
 interface Props {
   items: string[];
+  alpaca?: boolean | number;
 }
-const { items } = Astro.props;
+const { items, alpaca = false } = Astro.props;
 const loop = [...items, ...items];
+const herd = Math.min(Number(alpaca), items.length);
+const walkers = new Set(Array.from({ length: herd }, (_, k) => (1 + Math.floor((k * items.length) / herd)) % items.length));
 ---
 
 <div class="ticker" aria-hidden="true" style={`--items:${items.length}`}>
   <div class="ticker-track">
     {
-      loop.map((t) => (
-        <span class="ticker-item">
-          <span class="tick" />
-          {t}
-        </span>
-      ))
+      loop.map((t, i) => {
+        const walker = walkers.has(i % items.length);
+        return (
+          <span class:list={["ticker-item", { "ticker-item--alpaca": walker }]}>
+            {walker ? <Alpaca class="ticker-alpaca" width={20} data-alpaca-walker /> : <span class="tick" />}
+            {t}
+          </span>
+        );
+      })
     }
   </div>
 </div>
