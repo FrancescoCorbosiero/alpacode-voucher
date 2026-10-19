@@ -16,7 +16,7 @@ npm-debug.log*
 .env.local
 
 # referral ledger written by the API in local runs
-data/
+/data/
 
 # os
 .DS_Store
