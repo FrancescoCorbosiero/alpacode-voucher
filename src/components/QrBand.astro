@@ -3,7 +3,8 @@
    alpacode.it/", the alpaca and the handwritten campaign line. On the
    web the QR opens this very page (handy to carry on from a phone, or to
    show to someone across the table); once a personal link exists the
-   script swaps in a QR of the invite itself. */
+   script swaps in a QR of the invite itself. The QR prints itself in
+   when the band scrolls in (data-print); the alpaca is alive. */
 import type { Lang } from "../i18n/types";
 import { landing } from "../data/landing";
 import { shared } from "../data/shared";
@@ -27,7 +28,7 @@ const svg = qrSvg(target, { label: c.qrAlt });
 <section class="rf-qr-sec" aria-labelledby="qr-title">
   <div class="wrap-wide">
     <div class="rf-qr-band" data-qr-band>
-      <div class="rf-qr-tile" data-qr-tile set:html={svg} />
+      <div class="rf-qr-tile" data-qr-tile data-print set:html={svg} />
       <div class="rf-qr-copy">
         <h2 class="rf-qr-title" id="qr-title" data-qr-title>{c.title}</h2>
         <p class="rf-qr-body" data-qr-body>{c.body}</p>
@@ -41,7 +42,7 @@ const svg = qrSvg(target, { label: c.qrAlt });
         </p>
       </div>
       <div class="rf-qr-sign" aria-hidden="true">
-        <Alpaca class="rf-qr-alpaca" width={92} />
+        <Alpaca class="rf-qr-alpaca" width={92} data-alpaca />
         <HandLine lines={shared[lang].campaignLine} />
       </div>
     </div>

@@ -1,12 +1,45 @@
 ---
-/* The flyer's alpaca: a flat silhouette in profile, drawn for this page.
-   Decorative (aria-hidden); colour comes from currentColor. */
+/* The alpaca: a flat silhouette in profile, first drawn for the «Segnala
+   un amico» flyer — and rigged, so lib/alpaca.ts can bring it to life
+   (walk, turn, flick an ear…). At rest it is the one shape it always
+   was: the same path is cut by clip paths into body, neck + head, front
+   ear, tail and four legs, every piece overlapping its neighbours so the
+   joints never open while it moves. Each piece's pivot is in data-pivot
+   (SVG user units). Decorative (aria-hidden); colour is currentColor.
+   Keep this file identical in alpacode-website and alpacode-voucher. */
 interface Props {
   class?: string;
   width?: number;
+  /** Behaviour hooks read by lib/motion.ts (data-alpaca, data-alpaca-walk…). */
+  [attr: `data-${string}`]: string | boolean | undefined;
 }
-const { class: cls, width = 64 } = Astro.props;
+const { class: cls, width = 64, ...rest } = Astro.props;
 const height = Math.round(width * 1.2);
+// IDs are document-wide: every alpaca on a page needs its own.
+const id = `alpaca-${Math.random().toString(36).slice(2, 8)}`;
+
+const SHAPE =
+  "M55 20 Q55 9 57 2 Q60 7 61.5 13.5 L63.5 13 Q65 6 68 1 Q70 7 69.5 13.5 Q76 12 80 17 L87 21.5 Q90.5 23.5 89.5 27 Q88.5 30.5 84 30.5 L76.5 31 Q71 32 70 38 L69.5 57 Q73.5 66 70.5 77 L71 116 Q71 118 69 118 L65 118 L64 89 L62 89 L61.5 117 L56.5 117 L56 85 Q42 90 29.5 85 L29.5 117 L24 117 L23 94 L21 94 L20.5 117 L15 117 L14.5 85 Q8.5 78 9 67 Q9 60 12 57 Q6.5 56.5 7 52.5 Q8 48.5 13.5 50.5 Q31 45.5 49.5 48.5 Q55 49.5 55 43 L55 26 Z";
+
+/* The cuts. A limb is the part of the shape past its joint plus a disc on
+   the joint itself (radius = the limb's half-width there), centred on the
+   pivot: the disc turns into itself, so a bent knee or a nodding neck
+   never opens a seam. Joints sit where the limb's sides run straight
+   across the cut (neck at y 42, legs at 89 and 94), so a turn slides the
+   outline along itself instead of stepping it. Neighbouring cuts overlap
+   by half a unit — edges that merely touch would leave a hairline of
+   anti-aliasing at rest. [polygon, disc cx cy r] */
+const CLIPS: Record<string, [string, number[]?]> = {
+  body: ["12.5,-1 40,-1 40,41.5 101,41.5 101,89 54,89 54,121 33,121 33,94 -1,94 -1,57 12.5,57"],
+  neck: ["40,42 40,-1 63.2,-1 63.2,13.3 69.9,13.3 69.9,-1 101,-1 101,42", [62.46, 42, 7.46]],
+  ear: ["63.2,-1 69.9,-1 69.9,13.8 63.2,13.8", [66.5, 13.3, 3]],
+  tail: ["-1,45 13,45 13,57 -1,57", [12.75, 53.75, 3.25]],
+  f1: ["63,88.6 101,88.6 101,121 63,121", [67.33, 89, 3.33]],
+  f2: ["54,88.6 63,88.6 63,121 54,121", [59.03, 89, 2.97]],
+  h1: ["22,93.6 33,93.6 33,121 22,121", [26.25, 94, 3.25]],
+  h2: ["-1,93.6 22,93.6 22,121 -1,121", [17.82, 94, 3.18]],
+};
+const piece = (name: string) => ({ href: `#${id}-shape`, "clip-path": `url(#${id}-${name})` });
 ---
 
 <svg
@@ -16,9 +49,36 @@ const height = Math.round(width * 1.2);
   height={height}
   aria-hidden="true"
   focusable="false"
+  {...rest}
 >
-  <path
-    fill="currentColor"
-    d="M55 20 Q55 9 57 2 Q60 7 61.5 13.5 L63.5 13 Q65 6 68 1 Q70 7 69.5 13.5 Q76 12 80 17 L87 21.5 Q90.5 23.5 89.5 27 Q88.5 30.5 84 30.5 L76.5 31 Q71 32 70 38 L69.5 57 Q73.5 66 70.5 77 L71 116 Q71 118 69 118 L65 118 L64 89 L62 89 L61.5 117 L56.5 117 L56 85 Q42 90 29.5 85 L29.5 117 L24 117 L23 94 L21 94 L20.5 117 L15 117 L14.5 85 Q8.5 78 9 67 Q9 60 12 57 Q6.5 56.5 7 52.5 Q8 48.5 13.5 50.5 Q31 45.5 49.5 48.5 Q55 49.5 55 43 L55 26 Z"
-  ></path>
+  <defs>
+    <path id={`${id}-shape`} d={SHAPE}></path>
+    {
+      Object.entries(CLIPS).map(([name, [points, disc]]) => (
+        <clipPath id={`${id}-${name}`}>
+          <polygon points={points} />
+          {disc && <circle cx={disc[0]} cy={disc[1]} r={disc[2]} />}
+        </clipPath>
+      ))
+    }
+  </defs>
+  <g class="alpaca-rig" fill="currentColor">
+    {/* Far side first: hind and fore legs behind the body. */}
+    <g class="alpaca-leg" data-leg="h2" data-pivot="17.82 94"><use {...piece("h2")}></use></g>
+    <g class="alpaca-leg" data-leg="f2" data-pivot="59.03 89"><use {...piece("f2")}></use></g>
+    <use {...piece("body")}></use>
+    <g class="alpaca-leg" data-leg="h1" data-pivot="26.25 94"><use {...piece("h1")}></use></g>
+    <g class="alpaca-leg" data-leg="f1" data-pivot="67.33 89"><use {...piece("f1")}></use></g>
+    <g class="alpaca-tail" data-pivot="12.75 53.75"><use {...piece("tail")}></use></g>
+    <g class="alpaca-neck" data-pivot="62.46 42">
+      <use {...piece("neck")}></use>
+      <g class="alpaca-ear" data-pivot="66.5 13.3"><use {...piece("ear")}></use></g>
+    </g>
+  </g>
 </svg>
+
+<style>
+  .alpaca {
+    overflow: visible;
+  }
+</style>

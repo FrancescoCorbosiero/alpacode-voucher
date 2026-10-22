@@ -13,7 +13,7 @@ interface Props {
 const { href, tag, title, body, cta, accent = "blue" } = Astro.props;
 ---
 
-<a class:list={["rf-cross", `rf-cross--${accent}`]} href={href}>
+<a class:list={["rf-cross", `rf-cross--${accent}`]} href={href} data-tilt>
   <span class="rf-cross-tag">{tag}</span>
   <span class="rf-cross-title">{title}</span>
   <span class="rf-cross-body">{body}</span>

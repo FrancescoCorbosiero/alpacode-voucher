@@ -9,6 +9,8 @@
    2. SCROLL — below the fold, GSAP ScrollTrigger + SplitText with
       Lenis smooth scrolling (motion.ts). Nothing below the fold is
       hidden by CSS: if the script never runs the page is just static.
+   3. EFFECTS — the pieces motion.ts adds on the fly: the burst, the
+      QR's scan bar, "typing…" in the chat preview.
 
    prefers-reduced-motion: every intro and scroll effect is off.
    ============================================================ */
@@ -129,9 +131,83 @@ html.lenis body {
   }
 }
 
+/* ---------- 3. Effects (added by motion.ts) ---------- */
+/* The burst when a link is ready: the sticker's struts, the ticker's
+   square ticks, euro signs and the odd tiny alpaca, above everything. */
+.fx-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  pointer-events: none;
+}
+.fx-bit {
+  position: absolute;
+  display: block;
+  will-change: transform, opacity;
+}
+.fx-strut {
+  width: 26px;
+  height: 6px;
+  background: currentColor;
+}
+.fx-square {
+  width: 9px;
+  height: 9px;
+  background: currentColor;
+}
+.fx-euro {
+  font-family: var(--display);
+  font-size: 26px;
+  line-height: 1;
+}
+.fx-alpaca {
+  width: 24px;
+  height: 29px;
+}
+.fx-alpaca svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* The QR prints under a scan bar (printQr). Its tile is the frame. */
+.qr-scan {
+  position: absolute;
+  left: -6px;
+  right: -6px;
+  top: 0;
+  height: 3px;
+  margin-top: -1.5px;
+  background: var(--blue);
+  box-shadow: 0 0 14px 2px rgba(59, 114, 233, 0.55);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* "typing…" before the chat preview's bubble pops in. Square dots: the
+   brand has no round corners. */
+.rf-typing {
+  position: absolute;
+  top: 22px;
+  right: 18px;
+  display: inline-flex;
+  gap: 5px;
+  padding: 12px 13px;
+  background: #d9e5fb;
+}
+.rf-typing i {
+  display: block;
+  width: 6px;
+  height: 6px;
+  background: var(--mute-2);
+}
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .scroll-progress {
+  .scroll-progress,
+  .fx-layer,
+  .qr-scan,
+  .rf-typing {
     display: none;
   }
   .ticker-track {

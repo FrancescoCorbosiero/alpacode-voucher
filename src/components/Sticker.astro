@@ -2,7 +2,8 @@
 /* The flyer's "FINO A 100€ DI CASHBACK →" badge: an ink block set at a
    tilt, two blue tags pinned across its corners, short blue struts
    bursting out of the sides. It stamps in on load, the amount counts up
-   (motion-safe only) and the whole thing is a link to its explanation.
+   (motion-safe only), it leans toward a mouse that comes near it
+   (data-magnetic) and the whole thing is a link to its explanation.
    The same component carries the invite page's "Prima call 0€". */
 interface Props {
   pre: string;
@@ -22,7 +23,7 @@ const template = amount.replace(/\d+/, "{n}");
 const narrow = amount.replace(/\s/g, "").length <= 2;
 ---
 
-<a class:list={["rf-sticker", { "rf-sticker--narrow": narrow }, cls]} href={href} aria-label={aria} data-sticker>
+<a class:list={["rf-sticker", { "rf-sticker--narrow": narrow }, cls]} href={href} aria-label={aria} data-sticker data-magnetic>
   <span class="rf-burst rf-burst--l" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
   <span class="rf-burst rf-burst--r" aria-hidden="true"><i></i><i></i><i></i></span>
   <span class="rf-sticker-pre" aria-hidden="true">{pre}</span>

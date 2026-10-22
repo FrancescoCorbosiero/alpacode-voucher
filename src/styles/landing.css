@@ -121,6 +121,8 @@
   position: absolute;
   inset: calc(-1 * var(--hero-pt)) 0 calc(-1 * var(--hero-pb));
   margin: 0;
+  /* The photo settles closer as the page scrolls (motion.ts): keep it in its frame. */
+  overflow: hidden;
 }
 .rf-photo picture {
   display: block;
@@ -384,6 +386,18 @@
   background: var(--blue);
   flex-shrink: 0;
 }
+/* The alpaca leading each set stands on the text's baseline, its head in
+   the band's padding, so the band keeps its height. */
+.ticker-item--alpaca {
+  align-items: baseline;
+}
+.ticker-alpaca {
+  flex: none;
+  width: 20px;
+  height: auto;
+  margin-top: -10px;
+  color: var(--blue);
+}
 @keyframes tickerMove {
   to {
     transform: translateX(-50%);
@@ -500,7 +514,8 @@
   padding-top: 0;
 }
 .rf-steps-head {
-  margin-bottom: clamp(40px, 4vw, 60px);
+  /* room for the alpaca standing on the first tile */
+  margin-bottom: clamp(60px, 5vw, 76px);
 }
 .rf-steps-title {
   display: flex;
@@ -549,6 +564,19 @@
 }
 .rf-steps-track {
   --steps-gap: clamp(20px, 2.4vw, 36px);
+}
+/* The alpaca on the number tile of step --here (0 = the first), centred
+   on the 64px tile; on desktop it leaps along the tiles (motion.ts). */
+.rf-steps-runner {
+  position: absolute;
+  z-index: 2;
+  bottom: 100%;
+  left: calc(var(--here, 0) * ((100% - 3 * var(--steps-gap)) / 4 + var(--steps-gap)) + 14px);
+  width: 36px;
+  height: auto;
+  margin-bottom: -1px;
+  color: var(--ink);
+  pointer-events: none;
 }
 .rf-steps {
   position: relative;
@@ -688,6 +716,7 @@
   color: var(--mute-2);
 }
 .rf-preview-screen {
+  position: relative;
   padding: 22px 18px 20px 40px;
   border: 1px solid var(--rule);
   background-color: #e6ebf4;
@@ -985,6 +1014,9 @@
   border: 1px solid var(--rule);
   background: var(--paper);
 }
+.rf-result-qr-code {
+  position: relative;
+}
 .rf-result-qr-code svg {
   width: 132px;
   height: 132px;
@@ -1041,6 +1073,7 @@
   background: var(--blue);
 }
 .rf-qr-tile {
+  position: relative;
   width: clamp(132px, 12vw, 172px);
   aspect-ratio: 1;
   padding: 6px;
@@ -1253,6 +1286,11 @@
 .rf-faq-item[open] .rf-faq-ic::after {
   transform: rotate(0deg);
 }
+/* motion.ts keeps [open] until the answer has folded away: the icon turns
+   back to "+" as soon as the closing starts. */
+.rf-faq-item.is-closing .rf-faq-ic::after {
+  transform: rotate(90deg);
+}
 .rf-faq-item p {
   max-width: 46em;
   padding: 0 40px 26px 0;
@@ -1445,8 +1483,12 @@
     row-gap: 48px;
   }
   .rf-steps-rail,
-  .rf-step-arrow {
+  .rf-step-arrow,
+  .rf-steps-runner {
     display: none;
+  }
+  .rf-steps-head {
+    margin-bottom: clamp(40px, 4vw, 60px);
   }
   .rf-studio-grid {
     grid-template-columns: minmax(0, 1fr);

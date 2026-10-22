@@ -1,6 +1,8 @@
 ---
-/* Sticky CTA pill — appears once the hero is gone, steps aside while the
-   form is on screen (and after the form has done its job). */
+/* Sticky CTA pill — appears once the hero is gone, steps aside while
+   anything marked [data-sticky-hide] is on screen: the form (and after the
+   form has done its job), the finale that repeats the same call, the
+   footer's fine print. */
 interface Props {
   label: string;
   href: string;
@@ -15,11 +17,11 @@ const { label, href } = Astro.props;
 <script>
   const sticky = document.querySelector<HTMLElement>("[data-sticky]");
   const hero = document.querySelector<HTMLElement>("[data-hero]");
-  const target = document.querySelector<HTMLElement>("[data-sticky-hide]");
+  const targets = document.querySelectorAll<HTMLElement>("[data-sticky-hide]");
   if (sticky && hero) {
     let pastHero = false;
-    let onTarget = false;
-    const apply = () => sticky.classList.toggle("is-visible", pastHero && !onTarget);
+    const onScreen = new Set<Element>();
+    const apply = () => sticky.classList.toggle("is-visible", pastHero && onScreen.size === 0);
     new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => (pastHero = !e.isIntersecting));
@@ -27,14 +29,13 @@ const { label, href } = Astro.props;
       },
       { rootMargin: "-80px 0px 0px 0px" },
     ).observe(hero);
-    if (target) {
-      new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => (onTarget = e.isIntersecting));
-          apply();
-        },
-        { threshold: 0.12 },
-      ).observe(target);
-    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => (e.isIntersecting ? onScreen.add(e.target) : onScreen.delete(e.target)));
+        apply();
+      },
+      { threshold: 0.12 },
+    );
+    targets.forEach((t) => io.observe(t));
   }
 </script>
