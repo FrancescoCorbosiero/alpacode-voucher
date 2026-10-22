@@ -1,5 +1,10 @@
 # Alpacode · Segnala un amico
 
+> **Superato.** Il programma ora vive in
+> [alpacode-website](https://github.com/FrancescoCorbosiero/alpacode-website),
+> sotto `/voucher/` (tutto in `docs/voucher.md` di quel repo). Questo repo
+> resta per la sua storia: le modifiche si fanno lì.
+
 Landing del programma cashback di Alpacode: **«Conosci qualcuno a cui potrebbe
 servire un sito web?»** — chi segnala un amico che diventa cliente riceve
 **fino a 100 €** con bonifico, PayPal o buono acquisto.
